@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Argus AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="argus.css" />
+    <link rel="stylesheet" href="inventory.css" />
+    <link rel="stylesheet" href="stats.css" />
+    <link rel="stylesheet" href="modules.css" />
+    <link rel="stylesheet" href="humanizer.css" />
+  </head>
+  <body class="frost-nav mod-visuals mod-tap mod-trigger mod-logger">
+    <canvas id="bgFxCanvas" class="bg-fx" hidden aria-hidden="true"></canvas>
+    <div class="win-resize" data-edge="n"></div>
+    <div class="win-resize" data-edge="s"></div>
+    <div class="win-resize" data-edge="e"></div>
+    <div class="win-resize" data-edge="w"></div>
+    <div class="win-resize" data-edge="ne"></div>
+    <div class="win-resize" data-edge="nw"></div>
+    <div class="win-resize" data-edge="se"></div>
+    <div class="win-resize" data-edge="sw"></div>
+
+    <header class="titlebar">
+      <div class="titlebar-drag">
+        <button type="button" class="titlebar-game" id="titlebar-game" aria-label="Choose game">
+          <img id="titlebar-game-art" alt="" draggable="false" />
+          <span class="titlebar-game-fallback">MODEL</span>
+        </button>
+        <div class="titlebar-configs" id="titlebar-configs">
+          <div class="cfg-drop" id="configDrop">
+            <button type="button" class="cfg-drop-btn" id="configSelect" aria-label="Config" aria-haspopup="listbox" aria-expanded="false">
+              <span id="configSelectLabel">Default</span>
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.8 4.4 6 8.1 9.2 4.4"/></svg>
+            </button>
+          </div>
+          <button type="button" class="titlebar-cfg-btn" id="configNew" aria-label="New config">+</button>
+          <button type="button" class="titlebar-cfg-btn titlebar-cfg-del" id="configDelete" aria-label="Delete config">−</button>
+          <button type="button" class="titlebar-cfg-btn titlebar-cfg-save" id="configSave" aria-label="Save config">SAVE</button>
+        </div>
+      </div>
+      <div class="window-controls">
+        <button type="button" class="win-btn" id="winMin" aria-label="Minimize">
+          <svg viewBox="0 0 12 12"><path d="M2 6h8" /></svg>
+        </button>
+        <button type="button" class="win-btn" id="winMax" aria-label="Maximize">
+          <svg class="win-max" viewBox="0 0 12 12"><rect x="2.25" y="2.25" width="7.5" height="7.5" rx="0.6" /></svg>
+          <svg class="win-restore" viewBox="0 0 12 12"><path d="M4 3.4h4.6V8" /><rect x="2.2" y="4.2" width="5.6" height="5.6" rx="0.5" /></svg>
+        </button>
+        <button type="button" class="win-btn close" id="winClose" aria-label="Quit">
+          <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" /></svg>
+        </button>
+      </div>
+    </header>
+    <div class="cfg-drop-menu" id="configMenu" hidden role="listbox"></div>
+
+    <div class="alt-nav-hit" id="altNavHit" aria-hidden="true"></div>
+    <div class="alt-nav-wrap" id="altNavWrap">
+      <nav class="alt-nav" id="altNav" aria-label="Main navigation">
+        <div class="alt-nav-bar">
+          <div class="alt-nav-items">
+            <button type="button" class="nav-item active" data-tab="home">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10" rx="2" /><rect x="13" y="3" width="8" height="6" rx="2" /><rect x="13" y="11" width="8" height="10" rx="2" /><rect x="3" y="15" width="8" height="6" rx="2" /></svg>
+              <span>Dashboard</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="visual">
+              <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+              <span>Visual</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="humanizer">
+              <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 1 5 5v8a5 5 0 0 1-10 0V8a5 5 0 0 1 5-5Z" /><path d="M12 7v3" /><path d="M3 12h1.5M19.5 12H21M4.6 6.4l1.2.8M18.2 7.2l1.2-.8" /></svg>
+              <span>Humanizer</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="rpaim">
+              <svg viewBox="0 0 24 24"><path d="M4 15a8 8 0 0 1 16 0" /><path d="m12 15 4.2-4.2" /><path d="M3 19h18" /></svg>
+              <span>Aim assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="director">
+              <svg viewBox="0 0 24 24"><path d="M12 3v6M12 15v6M3 12h6M15 12h6" /><path d="m14.2 9.8 4.6-4.6M14.2 14.2l4.6 4.6M9.8 14.2 5.2 18.8M9.8 9.8 5.2 5.2" /></svg>
+              <span>Aim director</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="prediction">
+              <svg viewBox="0 0 24 24"><path d="M3 17c4-1.5 7-9 11-9" /><path d="m11 5 3 3-3 3" /><circle cx="19" cy="17" r="2.5" /><path d="M19 12.5V14M19 20v1.5M14.5 17H16M22 17h1.5" /></svg>
+              <span>Target prediction</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="corrector">
+              <svg viewBox="0 0 24 24"><path d="M4 18c4-10 12-10 16 0" /><path d="m17 16 3 2-2 3" /></svg>
+              <span>Aim corrector</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tracking">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 5v2M12 17v2M5 12h2M17 12h2" /><path d="M7.8 7.8 9.2 9.2M14.8 14.8l1.4 1.4M16.2 7.8 14.8 9.2M9.2 14.8 7.8 16.2" /></svg>
+              <span>Tracking assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="spray">
+              <svg viewBox="0 0 24 24"><path d="M12 4v16" /><path d="M3.5 12h5M15.5 12h5" /><path d="m6.5 9-3 3 3 3M17.5 9l3 3-3 3" /></svg>
+              <span>Spray assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="onetap">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2" /></svg>
+              <span>One tap assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tap">
+              <svg viewBox="0 0 24 24"><path d="M8 13v6a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-6" /><path d="M13 11V7a2 2 0 1 1 4 0v8" /><path d="M8 15 5.6 12.4A2 2 0 0 1 8 9.2V13" /></svg>
+              <span>Tap assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="trigger">
+              <svg viewBox="0 0 24 24"><path d="M2.4 8.5h16.8a1.1 1.1 0 0 1 1.1 1.1v2.2H4"/><path d="M17.6 8.5V7.2"/><path d="M10.6 11.8h7.6v1.6h-3.4"/><path d="M14.8 13.4v2.2a.8.8 0 0 1-.8.8H8.4"/><path d="M9.8 11.8v2.4"/><path d="M4 11.8v3.4L2.6 20.6h4.6l1.6-5.4"/></svg>
+              <span>Trigger</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="magnet">
+              <svg viewBox="0 0 24 24"><path d="M7 3h4v9a1 1 0 0 1-2 0V5H7v7a5 5 0 0 0 10 0V5h-2v7a1 1 0 0 1-2 0V3h4v9a5 5 0 0 1-10 0V3Z" /></svg>
+              <span>Magnet trigger</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="inventory">
+              <svg viewBox="0 0 24 24"><path d="M3.5 7.6 12 3.3l8.5 4.3v8.8L12 20.7l-8.5-4.3z" /><path d="M3.5 7.6 12 11.9l8.5-4.3M12 11.9v8.8" /><path d="m7.7 5.5 8.5 4.3" /></svg>
+              <span>CS2 inventory</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="stats">
+              <svg viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3" /></svg>
+              <span>CS2 stats</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="modules">
+              <svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
+              <span>Modules</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="logger">
+              <svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h10" /></svg>
+              <span>Logger</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="settings">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg>
+              <span>Settings</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><span></span><i></i></div>
+          <div>
+            <p class="brand-name">ARGUS<span>AI</span></p>
+          </div>
+        </div>
+        <button type="button" class="side-search" data-palette-open aria-label="Search settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+          <span>Search</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+        <nav class="nav-list" aria-label="Main">
+          <div class="nav-section">
+            <p class="nav-group">Overview</p>
+            <button type="button" class="nav-item active" data-tab="home">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10" rx="2" /><rect x="13" y="3" width="8" height="6" rx="2" /><rect x="13" y="11" width="8" height="10" rx="2" /><rect x="3" y="15" width="8" height="6" rx="2" /></svg>
+              <span>Dashboard</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="visual">
+              <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+              <span>Visual</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="humanizer">
+              <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 1 5 5v8a5 5 0 0 1-10 0V8a5 5 0 0 1 5-5Z" /><path d="M12 7v3" /><path d="M3 12h1.5M19.5 12H21M4.6 6.4l1.2.8M18.2 7.2l1.2-.8" /></svg>
+              <span>Humanizer</span>
+            </button>
+          </div>
+          <div class="nav-section">
+            <p class="nav-group">Aim</p>
+            <button type="button" class="nav-item" data-tab="rpaim">
+              <svg viewBox="0 0 24 24"><path d="M4 15a8 8 0 0 1 16 0" /><path d="m12 15 4.2-4.2" /><path d="M3 19h18" /></svg>
+              <span>Aim assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="director">
+              <svg viewBox="0 0 24 24"><path d="M12 3v6M12 15v6M3 12h6M15 12h6" /><path d="m14.2 9.8 4.6-4.6M14.2 14.2l4.6 4.6M9.8 14.2 5.2 18.8M9.8 9.8 5.2 5.2" /></svg>
+              <span>Aim director</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="prediction">
+              <svg viewBox="0 0 24 24"><path d="M3 17c4-1.5 7-9 11-9" /><path d="m11 5 3 3-3 3" /><circle cx="19" cy="17" r="2.5" /><path d="M19 12.5V14M19 20v1.5M14.5 17H16M22 17h1.5" /></svg>
+              <span>Target prediction</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="corrector">
+              <svg viewBox="0 0 24 24"><path d="M4 18c4-10 12-10 16 0" /><path d="m17 16 3 2-2 3" /></svg>
+              <span>Aim corrector</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tracking">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 5v2M12 17v2M5 12h2M17 12h2" /><path d="M7.8 7.8 9.2 9.2M14.8 14.8l1.4 1.4M16.2 7.8 14.8 9.2M9.2 14.8 7.8 16.2" /></svg>
+              <span>Tracking assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="spray">
+              <svg viewBox="0 0 24 24"><path d="M12 4v16" /><path d="M3.5 12h5M15.5 12h5" /><path d="m6.5 9-3 3 3 3M17.5 9l3 3-3 3" /></svg>
+              <span>Spray assist</span>
+            </button>
+          </div>
+          <div class="nav-section">
+            <p class="nav-group">Fire</p>
+            <button type="button" class="nav-item" data-tab="onetap">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2" /></svg>
+              <span>One tap assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tap">
+              <svg viewBox="0 0 24 24"><path d="M8 13v6a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-6" /><path d="M13 11V7a2 2 0 1 1 4 0v8" /><path d="M8 15 5.6 12.4A2 2 0 0 1 8 9.2V13" /></svg>
+              <span>Tap assist</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="trigger">
+              <svg viewBox="0 0 24 24"><path d="M2.4 8.5h16.8a1.1 1.1 0 0 1 1.1 1.1v2.2H4"/><path d="M17.6 8.5V7.2"/><path d="M10.6 11.8h7.6v1.6h-3.4"/><path d="M14.8 13.4v2.2a.8.8 0 0 1-.8.8H8.4"/><path d="M9.8 11.8v2.4"/><path d="M4 11.8v3.4L2.6 20.6h4.6l1.6-5.4"/></svg>
+              <span>Trigger</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="magnet">
+              <svg viewBox="0 0 24 24"><path d="M7 3h4v9a1 1 0 0 1-2 0V5H7v7a5 5 0 0 0 10 0V5h-2v7a1 1 0 0 1-2 0V3h4v9a5 5 0 0 1-10 0V3Z" /></svg>
+              <span>Magnet trigger</span>
+            </button>
+          </div>
+          <div class="nav-section">
+            <p class="nav-group">Extras</p>
+            <button type="button" class="nav-item" data-tab="inventory">
+              <svg viewBox="0 0 24 24"><path d="M3.5 7.6 12 3.3l8.5 4.3v8.8L12 20.7l-8.5-4.3z" /><path d="M3.5 7.6 12 11.9l8.5-4.3M12 11.9v8.8" /><path d="m7.7 5.5 8.5 4.3" /></svg>
+              <span>CS2 inventory</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="stats">
+              <svg viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3" /></svg>
+              <span>CS2 stats</span>
+            </button>
+          </div>
+          <div class="nav-section">
+            <p class="nav-group">System</p>
+            <button type="button" class="nav-item" data-tab="modules">
+              <svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
+              <span>Modules</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="logger">
+              <svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h10" /></svg>
+              <span>Logger</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="settings">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg>
+              <span>Settings</span>
+            </button>
+          </div>
+        </nav>
+        <div class="capture-dock" id="captureDock">
+          <button type="button" class="dock-game" data-open-game aria-label="Choose game">
+            <span class="dock-art"><img id="dockGameArt" alt="" draggable="false" /></span>
+            <span class="dock-meta">
+              <strong id="dockGameName">No game</strong>
+              <small id="dockStatus">Idle</small>
+            </span>
+          </button>
+          <button type="button" class="dock-toggle" data-capture-toggle aria-label="Start capture">
+            <svg class="dock-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+            <svg class="dock-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <p class="crumbs"><span id="pageEyebrow">Overview</span><i aria-hidden="true">/</i><b id="pageCrumb">Dashboard</b></p>
+            <h1 id="pageTitle">Dashboard</h1>
+            <p class="page-sub" id="pageSub">Session status, live performance and quick module switches.</p>
+          </div>
+          <div class="topbar-actions">
+            <button type="button" class="palette-trigger" data-palette-open aria-label="Search settings">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+              <kbd>Ctrl K</kbd>
+            </button>
+            <span class="run-light" id="run-dot"></span>
+          </div>
+        </header>
+        <p class="error" id="error-text" hidden></p>
+
+        <section class="tab-panel active" id="home">
+          <div class="dash-grid">
+            <article class="dash-hero" id="dashHero">
+              <div class="dash-hero-art"><img id="dashGameArt" alt="" draggable="false" /></div>
+              <div class="dash-hero-body">
+                <p class="eyebrow">SESSION</p>
+                <h2 id="dashGameName">No game selected</h2>
+                <p class="dash-state"><i></i><span id="dashState">Capture idle</span></p>
+                <div class="dash-actions">
+                  <button type="button" class="dash-primary" data-capture-toggle>
+                    <svg class="dock-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+                    <svg class="dock-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
+                    <span>Start capture</span>
+                  </button>
+                  <button type="button" class="dash-secondary" data-open-game>Change game</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card dash-telemetry">
+              <div class="dash-card-head">
+                <div>
+                  <p class="eyebrow">LIVE</p>
+                  <h2>Performance</h2>
+                </div>
+                <span class="dash-target" id="dashTarget"><i></i><span>No target</span></span>
+              </div>
+              <div class="stat-grid">
+                <div class="stat" data-stat="vision_fps">
+                  <span>Vision</span>
+                  <strong><b>0</b><small>fps</small></strong>
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><path class="spark-fill" /><path class="spark-line" /></svg>
+                </div>
+                <div class="stat" data-stat="loop_fps">
+                  <span>Mouse loop</span>
+                  <strong><b>0</b><small>fps</small></strong>
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><path class="spark-fill" /><path class="spark-line" /></svg>
+                </div>
+                <div class="stat" data-stat="vision_infer_ms">
+                  <span>Inference</span>
+                  <strong><b>0</b><small>ms</small></strong>
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><path class="spark-fill" /><path class="spark-line" /></svg>
+                </div>
+                <div class="stat" data-stat="vision_capture_ms">
+                  <span>Capture</span>
+                  <strong><b>0</b><small>ms</small></strong>
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><path class="spark-fill" /><path class="spark-line" /></svg>
+                </div>
+              </div>
+            </article>
+
+            <article class="card dash-latency" id="dashLatency">
+              <div class="dash-card-head">
+                <div>
+                  <p class="eyebrow">PIPELINE</p>
+                  <h2>Latency</h2>
+                </div>
+                <span class="dash-target" id="latState"><i></i><span>Capture idle</span></span>
+              </div>
+              <div class="lat-body">
+                <div class="lat-total">
+                  <span class="lat-label">Frame to input</span>
+                  <strong class="lat-big"><b id="latTotalAvg">—</b><small>ms</small></strong>
+                  <p class="lat-sub">
+                    <span>p95 <b id="latTotalP95">—</b></span>
+                    <span>p99 <b id="latTotalP99">—</b></span>
+                    <span>max <b id="latTotalMax">—</b></span>
+                  </p>
+                  <div class="lat-hist" id="latHist" aria-hidden="true"></div>
+                  <small class="lat-axis"><span>0</span><span id="latHistHi">—</span></small>
+                </div>
+                <div class="lat-stages">
+                  <div class="lat-bar" id="latBar" aria-hidden="true">
+                    <i data-seg="infer"></i><i data-seg="age"></i><i data-seg="compute"></i><i data-seg="send"></i>
+                  </div>
+                  <table class="lat-table">
+                    <thead><tr><th>Stage</th><th>Avg</th><th>P95</th><th>Max</th></tr></thead>
+                    <tbody>
+                      <tr data-lat="infer" title="Preprocess, GPU inference, decode and target pick, from the moment the frame arrives."><td><i data-seg="infer"></i>Inference</td><td></td><td></td><td></td></tr>
+                      <tr data-lat="age" title="How old the detection already is when the mouse loop picks it up: the wait for the next tick."><td><i data-seg="age"></i>Result age</td><td></td><td></td><td></td></tr>
+                      <tr data-lat="compute" title="The mouse loop working out this tick's movement and clicks."><td><i data-seg="compute"></i>Aim compute</td><td></td><td></td><td></td></tr>
+                      <tr data-lat="send" title="Handing the movement or click to SendInput or the Feather."><td><i data-seg="send"></i>Input send</td><td></td><td></td><td></td></tr>
+                      <tr data-lat="capture" class="is-aside" title="Waiting for the game to present the next frame. This is the game's frame rate, not work Argus does."><td>Capture wait</td><td></td><td></td><td></td></tr>
+                      <tr data-lat="jitter" class="is-aside" title="How late the mouse loop woke up for its tick."><td>Loop wake-up late</td><td></td><td></td><td></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <p class="lat-note" id="latNote">Frame to input is what Argus adds between grabbing a frame and sending the mouse output. The game's own frame time, your display and the network sit outside it.</p>
+            </article>
+
+            <article class="card dash-modules">
+              <div class="dash-card-head">
+                <div>
+                  <p class="eyebrow">QUICK SWITCHES</p>
+                  <h2>Modules</h2>
+                </div>
+                <button type="button" class="dash-link" data-go-tab="modules">How each works</button>
+              </div>
+              <div class="tile-grid" id="moduleTiles"></div>
+            </article>
+
+            <article class="card dash-session">
+              <div class="dash-card-head">
+                <div>
+                  <p class="eyebrow">SETUP</p>
+                  <h2>Session</h2>
+                </div>
+              </div>
+              <dl class="session-list">
+                <div><dt>Config</dt><dd id="dashConfig">Default</dd></div>
+                <div><dt>Input</dt><dd id="dashInput">Windows API</dd></div>
+                <div><dt>Menu key</dt><dd id="dashHotkey">insert</dd></div>
+                <div><dt>Pause key</dt><dd id="dashPause">Unbound</dd></div>
+                <div><dt>Mode</dt><dd id="dashMode">Live</dd></div>
+              </dl>
+              <div class="session-keys">
+                <span><kbd>Ctrl K</kbd> search</span>
+                <span><kbd>Ctrl S</kbd> save config</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="modules">
+          <div class="mh" id="modHub">
+            <header class="mh-hero">
+              <div class="mh-hero-bg" aria-hidden="true"><i></i><i></i></div>
+              <div class="mh-ring" aria-hidden="true">
+                <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" /><circle cx="32" cy="32" r="27" class="mh-ring-arc" id="mhRingArc" /></svg>
+                <b id="mhOnCount">0</b>
+              </div>
+              <div class="mh-hero-copy">
+                <p class="eyebrow">LOADOUT</p>
+                <h2><span id="mhOnWord">0</span> of <span id="mhTotal">13</span> modules on</h2>
+                <p id="mhConfigNote">Switches are saved with your config.</p>
+              </div>
+              <div class="mh-groups" id="mhGroups"></div>
+            </header>
+
+            <div class="mh-toolbar">
+              <div class="segmented mh-filter" id="mhFilter" role="tablist" aria-label="Show modules">
+                <button type="button" data-filter="all" class="active">All</button>
+                <button type="button" data-filter="on">On</button>
+                <button type="button" data-filter="off">Off</button>
+              </div>
+              <label class="csi-search mh-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+                <input id="mhSearch" type="text" placeholder="Search modules" autocomplete="off" spellcheck="false" />
+              </label>
+            </div>
+
+            <div class="mh-body">
+              <div class="mh-list" id="mhList">
+          <section class="mh-group" data-group="aim">
+            <div class="mh-group-head">
+              <div>
+                <h3>Aim <em data-group-count="aim"></em></h3>
+                <p>Pull, correct and hold your crosshair on target.</p>
+              </div>
+              <button type="button" class="text-btn mh-group-off" data-group-off="aim" hidden>Turn all off</button>
+            </div>
+            <div class="mh-cards">
+              <article class="module-row mod-card" data-mod="aim_director" data-group="aim" data-tab="director" tabindex="0" style="--i:0">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Aim director on or off">
+                    <input type="checkbox" id="aim_director" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Aim director</strong>
+                  <small>A small pull toward the bone you are steering to. Always on, toggle, or hold.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">A small, continuous pull toward one of the bones you picked. By default it is always on; you can also bind a key and use it as a toggle or only while held. It only runs while a picked bone is inside its circle.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Small pull</span>
+                  <span><em>Key</em> Optional</span>
+                  <span><em>Aims at</em> Nearest picked bone</span>
+                  <span><em>Stops</em> Deadzone or moving away</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>When it starts</strong>
+                    <p>One of your picked bones has to be inside the FOV circle on a player that was just seen. It starts on the closest one. If you move toward another picked bone, it hands the pull over to that bone and stays there.</p>
+                  </div>
+                  <div>
+                    <strong>How strong</strong>
+                    <p>Force is how fast it closes. Curve decides whether more of the pull happens near the bone or near the edge. Max force limits each step, and above 8 px it also closes faster.</p>
+                  </div>
+                  <div>
+                    <strong>Already on them</strong>
+                    <p>Deadzone stops the pull once you are inside a small circle on the bone, so it does not glue the crosshair there.</p>
+                  </div>
+                  <div>
+                    <strong>When it stops</strong>
+                    <p>It lets go the moment you move the mouse away, when the bone leaves the circle, and it will not step past the aim point.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="target_prediction" data-group="aim" data-tab="prediction" tabindex="0" style="--i:1">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Target prediction on or off">
+                    <input type="checkbox" id="target_prediction" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Target prediction</strong>
+                  <small>Leads a moving player, after removing the part of their motion that is just your own view turning.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">A player walking across your screen is somewhere slightly different by the time the shot lands. This works out how fast they are actually moving and shifts every module's aim point ahead of them by that much. The hard part is that turning your own view also slides players across the screen; that part is measured and removed first, so a standing still player is never leaded.</p>
+                  <div class="mod-facts">
+                    <span><em>Mouse</em> Not moved directly</span>
+                    <span><em>Key</em> None</span>
+                    <span><em>Changes</em> Where every aim module points</span>
+                    <span><em>Stops</em> Still targets and hard flicks</span>
+                  </div>
+                  <div class="mod-steps">
+                    <div>
+                      <strong>Splitting the two motions</strong>
+                      <p>Your mouse counts say how far the view turned, which is how far a standing still player would appear to slide. That is subtracted from the player's motion on screen, and what is left is the player actually moving.</p>
+                    </div>
+                    <div>
+                      <strong>Checking itself</strong>
+                      <p>With three or more players on screen it measures the view turn directly from how they all shift together, which needs no calibration at all, and uses that to correct its counts-to-pixels number. That is what absorbs a scoped-in sensitivity or the wrong DPI in Settings.</p>
+                    </div>
+                    <div>
+                      <strong>How far ahead</strong>
+                      <p>It leads by the delay it can measure itself, capture plus detection plus the age of the frame, and you add the rest for your monitor and the server with Extra lead.</p>
+                    </div>
+                    <div>
+                      <strong>When it backs off</strong>
+                      <p>Confidence drops, and the lead shrinks with it, on a hard flick, right after the target changes, while the player is nearly still, or whenever the track stops looking like steady movement.</p>
+                    </div>
+                  </div>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="aim_corrector" data-group="aim" data-tab="corrector" tabindex="0" style="--i:1">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Aim corrector on or off">
+                    <input type="checkbox" id="aim_corrector" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Aim corrector</strong>
+                  <small>Bends a flick to the bone's height, then lets it go straight.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Bends a flick up or down so it meets the height of a bone you picked, then leaves the rest of that flick straight. It does not speed the flick up.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Bend only</span>
+                  <span><em>Key</em> None</span>
+                  <span><em>Fixes</em> Height</span>
+                  <span><em>Does not</em> Add speed</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>When it joins in</strong>
+                    <p>The bone has to be inside the FOV and in front of the way your mouse is already moving. A wide turn, or a flick that has already passed the target, is left alone.</p>
+                  </div>
+                  <div>
+                    <strong>Early bend</strong>
+                    <p>Most of the correction happens at the start, up to Max bend. Correction is how much of that bend is used. 50% uses all of it.</p>
+                  </div>
+                  <div>
+                    <strong>Then straight</strong>
+                    <p>Once the crosshair is at the bone's height, the bend fades out. The rest of the flick stays on that line.</p>
+                  </div>
+                  <div>
+                    <strong>Standing still</strong>
+                    <p>If the mouse is not moving, there is no path to bend, so it does nothing until you flick.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="tracking_assist" data-group="aim" data-tab="tracking" tabindex="0" style="--i:2">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Tracking assist on or off">
+                    <input type="checkbox" id="tracking_assist" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Tracking assist</strong>
+                  <small>Softens a small slip once you are already on a player.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">After you are already on a player, it softens a small slip off the middle of their box. It does not search for players, and it does not chase them.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Only if you drift</span>
+                  <span><em>Key</em> None</span>
+                  <span><em>Holds</em> Box center</span>
+                  <span><em>Help</em> Up to half a slow drift</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Settle first</strong>
+                    <p>The same player's box center has to stay inside the hold radius for the settle time. A brand-new target gets no help yet.</p>
+                  </div>
+                  <div>
+                    <strong>Slow drift</strong>
+                    <p>If your mouse then creeps off that center, Retention cancels part of the creep. It never reverses the move, and a still mouse gets nothing.</p>
+                  </div>
+                  <div>
+                    <strong>Breakaway</strong>
+                    <p>A faster mouse move turns the help down, then fully off at the breakaway speed, so a real flick is yours.</p>
+                  </div>
+                  <div>
+                    <strong>Lets go</strong>
+                    <p>It stops outside the hold radius, when you switch players, or when the detection goes stale.</p>
+                  </div>
+                </div>
+                <p class="mod-note">There is no bone picker. The hold point is the center of the player box, which might land on the chest, the head, or somewhere in between.</p>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="spray_acquire" data-group="aim" data-tab="spray" tabindex="0" style="--i:3">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Spray assist on or off">
+                    <input type="checkbox" id="spray_acquire" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Spray assist</strong>
+                  <small>While you fire, slides sideways onto the closest player.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">While you hold left click, it slides the crosshair sideways onto the closest player, then stops and leaves the spray to you.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Left and right only</span>
+                  <span><em>Key</em> Hold left click</span>
+                  <span><em>Aims at</em> Box center</span>
+                  <span><em>Up / down</em> Stays yours</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Only while firing</strong>
+                    <p>It stays off until left mouse is held and the closest player is inside the FOV circle.</p>
+                  </div>
+                  <div>
+                    <strong>Sideways only</strong>
+                    <p>The slide is horizontal, toward the middle of that player's box. Recoil and vertical aim are never touched.</p>
+                  </div>
+                  <div>
+                    <strong>How fast</strong>
+                    <p>Force is the closing rate. Max force limits each step, and above 8 px it also closes faster. It will not step past the center.</p>
+                  </div>
+                  <div>
+                    <strong>Then it sits</strong>
+                    <p>Once you are lined up sideways it stops helping, so your own spray control takes over. It also eases in after the click and yields if you aim away.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+              <article class="module-row mod-card rp-only" data-mod="rp_aim_assist" data-group="aim" data-tab="rpaim" tabindex="0" style="--i:4">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Aim assist on or off">
+                    <input type="checkbox" id="rp_aim_assist" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Aim assist <em class="rp-tag">RP2040</em></strong>
+                  <small>Slows your real mouse while the crosshair is on a bone you picked.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Slows your real mouse while the crosshair sits on a bone you picked. It never adds movement. Your hand still aims.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Slowed, not moved</span>
+                  <span><em>Key</em> None</span>
+                  <span><em>On</em> Bones you pick</span>
+                  <span><em>Needs</em> RP2040</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Setup</strong>
+                    <p>Plug the mouse into the Feather's USB-A and choose RP2040 in Settings. The board sits between the mouse and the PC.</p>
+                  </div>
+                  <div>
+                    <strong>On a bone</strong>
+                    <p>When the crosshair is on a Slow on bone, the board makes that mouse's own movement smaller before Windows sees it.</p>
+                  </div>
+                  <div>
+                    <strong>Feel</strong>
+                    <p>Slowdown is how much it slows. Ramp in and Ramp out ease that change. Bone margin makes the sticky area a little bigger.</p>
+                  </div>
+                  <div>
+                    <strong>While firing</strong>
+                    <p>Release on shot puts full speed back while you hold left click, so recoil is not slowed down with you.</p>
+                  </div>
+                </div>
+                <p class="mod-note">If Argus or the board link drops, full mouse speed comes back within about 300 ms, so it cannot stay stuck slow.</p>
+                <p class="rp-lock-note">Requires the RP2040 input method (Settings) with your mouse plugged into the Feather's USB-A.</p>
+                </template>
+              </article>
+            </div>
+          </section>
+          <section class="mh-group" data-group="fire">
+            <div class="mh-group-head">
+              <div>
+                <h3>Fire <em data-group-count="fire"></em></h3>
+                <p>Decide when and how the shot goes off.</p>
+              </div>
+              <button type="button" class="text-btn mh-group-off" data-group-off="fire" hidden>Turn all off</button>
+            </div>
+            <div class="mh-cards">
+              <article class="module-row mod-card rp-only" data-mod="rp_one_tap_assist" data-group="fire" data-tab="onetap" tabindex="0" style="--i:5">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn One tap assist on or off">
+                    <input type="checkbox" id="rp_one_tap_assist" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>One tap assist <em class="rp-tag">RP2040</em></strong>
+                  <small>Cleans a first click onto the head. A spray is left alone.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Cleans a first click onto the head. If you keep holding, it treats that as a spray and leaves it alone.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Eases to the head</span>
+                  <span><em>Click</em> Sent if it was a tap</span>
+                  <span><em>Key</em> Your left click</span>
+                  <span><em>Needs</em> RP2040</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>When it arms</strong>
+                    <p>The head has to be inside a small FOV, cooldown has to be clear, and the board has to be connected. Any other click is not delayed.</p>
+                  </div>
+                  <div>
+                    <strong>On the press</strong>
+                    <p>The Feather holds the button back from the game and the crosshair starts easing onto the head. Smoothness is how long that move takes.</p>
+                  </div>
+                  <div>
+                    <strong>A tap</strong>
+                    <p>If you release inside the Hold window, that counts as a tap. The click is sent after the move onto the head.</p>
+                  </div>
+                  <div>
+                    <strong>A spray</strong>
+                    <p>If you are still holding when the window ends, the hold is passed through and no extra click is added.</p>
+                  </div>
+                </div>
+                <p class="mod-note">It will not intercept the next click until Cooldown ends, or until the head leaves Reset FOV. If the link dies, a held click is released within about 300 ms.</p>
+                <p class="rp-lock-note">Requires the RP2040 input method (Settings) with your mouse plugged into the Feather's USB-A.</p>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="tap_assist" data-group="fire" data-tab="tap" tabindex="0" style="--i:6">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Tap assist on or off">
+                    <input type="checkbox" id="tap_assist" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Tap assist</strong>
+                  <small>One nudge toward a bone when you click.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">One small nudge toward a bone at the moment you click. Holding the button does not repeat it.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> One nudge</span>
+                  <span><em>Key</em> Your left click</span>
+                  <span><em>Aims at</em> A bone</span>
+                  <span><em>Again</em> On the next click</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>On the click</strong>
+                    <p>It only fires when left click goes down and the selected bone is inside FOV. Between clicks your mouse is left alone.</p>
+                  </div>
+                  <div>
+                    <strong>How far</strong>
+                    <p>The extra move is capped by Max nudge, and it will not step past the bone.</p>
+                  </div>
+                  <div>
+                    <strong>Not a hold</strong>
+                    <p>Keeping the button down does nothing extra. You have to click again for another nudge.</p>
+                  </div>
+                  <div>
+                    <strong>Trigger shots</strong>
+                    <p>Nudge trigger clicks applies the same one-shot nudge to clicks that Trigger or Magnet trigger send.</p>
+                  </div>
+                </div>
+                <p class="mod-note">This is for a small miss at the moment you shoot, not for tracking someone across the screen.</p>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="trigger_enabled" data-group="fire" data-tab="trigger" tabindex="0" style="--i:7">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Trigger on or off">
+                    <input type="checkbox" id="trigger_enabled" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Trigger</strong>
+                  <small>Fires while its key is held and you are on a bone you picked.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Fires while you hold its key and the crosshair is already on a bone you picked. It never moves the mouse.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Not moved</span>
+                  <span><em>Key</em> Hold key</span>
+                  <span><em>Fires on</em> Bones you pick</span>
+                  <span><em>Timing</em> Interval</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>The key</strong>
+                    <p>Bind a Hold key on the Trigger tab. Nothing happens until that key is held down.</p>
+                  </div>
+                  <div>
+                    <strong>On the bone</strong>
+                    <p>It clicks only while a Fire on bone is inside the FOV. A FOV of 0 means the crosshair has to be on the bone itself.</p>
+                  </div>
+                  <div>
+                    <strong>The gap</strong>
+                    <p>Initial delay holds the first click back after you land on a bone. After that, Interval is a range and each click waits a new random time picked from it, so it never falls into a fixed rhythm. Set both ends the same for a fixed wait.</p>
+                  </div>
+                  <div>
+                    <strong>Stops</strong>
+                    <p>Letting go of the key, or leaving the bone, stops the shots immediately.</p>
+                  </div>
+                </div>
+                <p class="mod-note">It can run next to Magnet trigger, which has its own key. If Tap's nudge option is on, those clicks can get one small correction too.</p>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="magnet" data-group="fire" data-tab="magnet" tabindex="0" style="--i:8">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Magnet trigger on or off">
+                    <input type="checkbox" id="magnet" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Magnet trigger</strong>
+                  <small>Hold its key to pull onto a bone and fire.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">While you hold its key, it pulls toward a bone and fires when a fire bone is in range. Pull and fire can be different bones.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Pull while held</span>
+                  <span><em>Key</em> Its own hold key</span>
+                  <span><em>Bones</em> Pull and fire, separate</span>
+                  <span><em>Works with</em> Trigger</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Two jobs</strong>
+                    <p>Pull toward and Fire on are picked separately, each with its own FOV. The pull only runs inside Pull FOV.</p>
+                  </div>
+                  <div>
+                    <strong>The pull</strong>
+                    <p>Speed, Force, and Smoothness control how fast and how soft it feels. Force at 0% turns the pull off and leaves the shots.</p>
+                  </div>
+                  <div>
+                    <strong>The shot</strong>
+                    <p>Once a Fire on bone is inside the fire circle it waits out the Initial delay, then clicks on a random wait picked from the Interval range each time. A fire FOV of 0 means on the bone.</p>
+                  </div>
+                  <div>
+                    <strong>Release</strong>
+                    <p>Letting go of the key stops the pull and the shots at once. Trigger can stay on with a different key.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+            </div>
+          </section>
+          <section class="mh-group" data-group="tools">
+            <div class="mh-group-head">
+              <div>
+                <h3>Tools <em data-group-count="tools"></em></h3>
+                <p>See what the modules see and keep a record.</p>
+              </div>
+              <button type="button" class="text-btn mh-group-off" data-group-off="tools" hidden>Turn all off</button>
+            </div>
+            <div class="mh-cards">
+              <article class="module-row mod-card" data-mod="visuals_enabled" data-group="tools" data-tab="visual" tabindex="0" style="--i:9">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Visuals on or off">
+                    <input type="checkbox" id="visuals_enabled" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Visuals</strong>
+                  <small>Circles, boxes, and dots on the game. Does not move the mouse.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Draws the circles, boxes, and dots on the game so you can see what each module is looking at. It never moves the mouse or clicks.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Left alone</span>
+                  <span><em>Key</em> None</span>
+                  <span><em>Draws</em> Ranges and aim spots</span>
+                  <span><em>Opens</em> Visual tab</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Circles</strong>
+                    <p>Each module's range, drawn in that module's color. A module only draws its circle while it is on.</p>
+                  </div>
+                  <div>
+                    <strong>Boxes</strong>
+                    <p>The player box the game found, plus the center line spray and tracking actually aim at.</p>
+                  </div>
+                  <div>
+                    <strong>Dots</strong>
+                    <p>The bone a module is using, such as the head for one tap or the bone you picked for director.</p>
+                  </div>
+                  <div>
+                    <strong>Your picks</strong>
+                    <p>The Visual tab turns each guide on or off. The overlay is click-through, so it does not block the game.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="logging_enabled" data-group="tools" data-tab="logger" tabindex="0" style="--i:10">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn Logger on or off">
+                    <input type="checkbox" id="logging_enabled" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>Logger</strong>
+                  <small>Writes this session and opens the Logger tab.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Writes a running note of this session and opens the Logger tab so you can read it while you play.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Not touched</span>
+                  <span><em>Tab</em> Only while this is on</span>
+                  <span><em>File</em> One log per run</span>
+                  <span><em>Errors</em> Always saved</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>What it writes</strong>
+                    <p>Module toggles, setting changes, and a short status line about every 30 seconds.</p>
+                  </div>
+                  <div>
+                    <strong>The tab</strong>
+                    <p>The live view tails this run. You can clear it, recolor each tag, or export the session as HTML.</p>
+                  </div>
+                  <div>
+                    <strong>The file</strong>
+                    <p>Each launch gets its own file under logs, named with the date and time you started.</p>
+                  </div>
+                  <div>
+                    <strong>When it is off</strong>
+                    <p>The Logger tab hides. Errors are still written, so a problem is not lost just because the module is off.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+            </div>
+          </section>
+          <section class="mh-group" data-group="extras">
+            <div class="mh-group-head">
+              <div>
+                <h3>Extras <em data-group-count="extras"></em></h3>
+                <p>Your Steam account, outside of the game.</p>
+              </div>
+              <button type="button" class="text-btn mh-group-off" data-group-off="extras" hidden>Turn all off</button>
+            </div>
+            <div class="mh-cards">
+              <article class="module-row mod-card" data-mod="cs2_inventory" data-group="extras" data-tab="inventory" tabindex="0" style="--i:11">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn CS2 inventory on or off">
+                    <input type="checkbox" id="cs2_inventory" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>CS2 inventory</strong>
+                  <small>Your Steam CS2 items in their own tab, with filters and optional CSFloat prices.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Adds a CS2 inventory tab with every item on your Steam account, including newly unboxed and trade-protected items. It has nothing to do with capture and never touches the mouse or the game.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Left alone</span>
+                  <span><em>Needs</em> Steam sign-in</span>
+                  <span><em>Prices</em> Optional, CSFloat</span>
+                  <span><em>Opens</em> CS2 inventory tab</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Turning it on</strong>
+                    <p>If no Steam sign-in is saved yet, a Steam window opens so you can sign in. The sign-in stays saved on this PC, so next time it goes straight to your items.</p>
+                  </div>
+                  <div>
+                    <strong>Prices</strong>
+                    <p>You are then asked if you want prices. Saying yes asks for a CSFloat API key. Each price is the lowest CSFloat buy-now listing for that item and wear.</p>
+                  </div>
+                  <div>
+                    <strong>The tab</strong>
+                    <p>Search, sort, and filter by type, rarity, trade lock, StatTrak, Souvenir, and stickers. Click any item for its float, stickers, and links.</p>
+                  </div>
+                  <div>
+                    <strong>Keys</strong>
+                    <p>Settings has a Manage API keys button to view, update, or delete keys. Keys are encrypted with your Windows account.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+              <article class="module-row mod-card" data-mod="cs2_stats" data-group="extras" data-tab="stats" tabindex="0" style="--i:12">
+                <div class="mod-card-top">
+                  <span class="mod-card-icon" aria-hidden="true"></span>
+                  <label class="module-pill" aria-label="Turn CS2 stats on or off">
+                    <input type="checkbox" id="cs2_stats" />
+                    <i></i>
+                  </label>
+                </div>
+                <div class="module-copy">
+                  <strong>CS2 stats</strong>
+                  <small>Your ranks, ratings, aim stats and recent matches from Leetify.</small>
+                </div>
+                <div class="mod-card-foot">
+                  <span class="mod-card-state"><i></i></span>
+                  <span class="mod-card-key" hidden></span>
+                </div>
+                <template class="mod-card-detail">
+                  <p class="mod-lead">Adds a CS2 stats tab with your Premier and FACEIT ranks, Leetify ratings, aim and utility stats, per-map ranks, and your recent matches with full scoreboards. Data comes live from Leetify and is never saved to disk.</p>
+                <div class="mod-facts">
+                  <span><em>Mouse</em> Left alone</span>
+                  <span><em>Needs</em> Steam sign-in</span>
+                  <span><em>Key</em> Optional, Leetify</span>
+                  <span><em>Opens</em> CS2 stats tab</span>
+                </div>
+                <div class="mod-steps">
+                  <div>
+                    <strong>Turning it on</strong>
+                    <p>It uses the same Steam sign-in as CS2 inventory. If you are not signed in yet, the Steam window opens first.</p>
+                  </div>
+                  <div>
+                    <strong>Leetify key</strong>
+                    <p>Optional. Without one Leetify applies stricter rate limits. Add it during setup or later in Settings under Manage API keys.</p>
+                  </div>
+                  <div>
+                    <strong>No profile?</strong>
+                    <p>Leetify only tracks accounts that have signed in to leetify.com once. Do that and your matches start showing up.</p>
+                  </div>
+                  <div>
+                    <strong>Matches</strong>
+                    <p>Click any recent match to open the full scoreboard for both teams, with a link to the match on Leetify.</p>
+                  </div>
+                </div>
+                </template>
+              </article>
+            </div>
+          </section>
+                <p class="mh-empty" id="mhEmpty" hidden>No modules match.</p>
+              </div>
+              <aside class="mh-inspector" id="mhInspector" aria-live="polite"></aside>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="stats">
+          <div class="cst-shell" id="cstShell">
+            <header class="cst-hero">
+              <div class="cst-hero-bg" aria-hidden="true"><i></i><i></i></div>
+              <div class="cst-hero-top">
+                <div class="cst-profile">
+                  <span class="cst-avatar" id="cstAvatarWrap"><img id="cstAvatar" alt="" draggable="false" /></span>
+                  <div class="cst-profile-copy">
+                    <p class="eyebrow">CS2 STATS</p>
+                    <h2 id="cstName">Your stats</h2>
+                    <small id="cstMeta">Not loaded yet</small>
+                  </div>
+                </div>
+                <div class="cst-hero-actions">
+                  <button type="button" class="cst-leetify-link" id="cstViewProfile" hidden>View on Leetify</button>
+                  <button type="button" class="csi-btn" id="cstRefresh">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 4v7h-7" /></svg>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+              <div class="cst-ranks" id="cstRanks"></div>
+              <div class="cst-bans" id="cstBans" hidden></div>
+            </header>
+
+            <div class="cst-body" id="cstBody">
+              <div class="cst-grid">
+                <article class="cst-card cst-ratings-card">
+                  <div class="cst-card-head"><div><p class="eyebrow">LEETIFY</p><h3>Ratings</h3></div></div>
+                  <div class="cst-ratings" id="cstRatings"></div>
+                </article>
+                <article class="cst-card cst-form-card">
+                  <div class="cst-card-head">
+                    <div><p class="eyebrow">LAST MATCHES</p><h3>Recent form</h3></div>
+                    <div class="cst-form-summary" id="cstFormSummary"></div>
+                  </div>
+                  <div class="cst-form" id="cstForm"></div>
+                  <div class="cst-form-tip" id="cstFormTip" hidden></div>
+                </article>
+              </div>
+              <article class="cst-card">
+                <div class="cst-card-head"><div><p class="eyebrow">LIFETIME</p><h3>Performance</h3></div></div>
+                <div class="cst-perf" id="cstPerf"></div>
+              </article>
+              <article class="cst-card">
+                <div class="cst-card-head"><div><p class="eyebrow">COMPETITIVE</p><h3>Map ranks</h3></div></div>
+                <div class="cst-maps" id="cstMaps"></div>
+              </article>
+              <article class="cst-card">
+                <div class="cst-card-head">
+                  <div><p class="eyebrow">HISTORY</p><h3>Recent matches</h3></div>
+                  <div class="segmented cst-seg" id="cstMatchSeg">
+                    <button type="button" data-src="all" class="active">All</button>
+                    <button type="button" data-src="premier">Premier</button>
+                    <button type="button" data-src="competitive">Competitive</button>
+                    <button type="button" data-src="other">Other</button>
+                  </div>
+                </div>
+                <div class="cst-matches" id="cstMatches"></div>
+                <button type="button" class="cst-more" id="cstMore" hidden>Show more</button>
+              </article>
+            </div>
+
+            <div class="cst-empty" id="cstEmpty" hidden></div>
+
+            <footer class="cst-foot">
+              <button type="button" class="cst-attrib" id="cstAttrib" data-link="https://leetify.com/" aria-label="Data Provided by Leetify">
+                <img id="cstAttribLogo" alt="Data Provided by Leetify" draggable="false" hidden />
+                <span id="cstAttribText">Data Provided by Leetify</span>
+              </button>
+            </footer>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="inventory">
+          <div class="csi-shell" id="csiShell">
+            <header class="csi-hero">
+              <div class="csi-hero-bg" aria-hidden="true"><i></i><i></i></div>
+              <div class="csi-hero-top">
+                <div class="csi-profile">
+                  <span class="csi-avatar" id="csiAvatarWrap"><img id="csiAvatar" alt="" draggable="false" /></span>
+                  <div class="csi-profile-copy">
+                    <p class="eyebrow">STEAM INVENTORY</p>
+                    <h2 id="csiPersona">Your inventory</h2>
+                    <small id="csiUpdated">Not loaded yet</small>
+                  </div>
+                </div>
+                <div class="csi-hero-actions">
+                  <button type="button" class="csi-btn csi-btn-ghost" id="csiAddPricing" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 2.6 4.5 3 4.5 1.4 4.5 3.2-2 3.3-4.5 3.3-4.5-1.4-4.5-3.1" /></svg>
+                    <span>Add prices</span>
+                  </button>
+                  <button type="button" class="csi-btn" id="csiRefresh">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 4v7h-7" /></svg>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+              <div class="csi-stats">
+                <div class="csi-stat csi-stat-value">
+                  <span>Est. value</span>
+                  <strong id="csiValue">&mdash;</strong>
+                  <small id="csiValueNote">&nbsp;</small>
+                </div>
+                <div class="csi-stat"><span>Items</span><strong id="csiCount">&mdash;</strong><small id="csiCountNote">&nbsp;</small></div>
+                <div class="csi-stat"><span>Tradable</span><strong id="csiTradable">&mdash;</strong><small id="csiTradableNote">&nbsp;</small></div>
+                <button type="button" class="csi-stat csi-stat-top" id="csiTop" disabled>
+                  <span>Top item</span>
+                  <strong id="csiTopName">&mdash;</strong>
+                  <small id="csiTopNote">&nbsp;</small>
+                  <img id="csiTopArt" alt="" draggable="false" hidden />
+                </button>
+              </div>
+              <div class="csi-mix" id="csiMix" hidden>
+                <div class="csi-mix-bar" id="csiMixBar"></div>
+                <div class="csi-mix-legend" id="csiMixLegend"></div>
+              </div>
+            </header>
+
+            <div class="csi-toolbar">
+              <div class="csi-cats" id="csiCats" role="tablist" aria-label="Item type"><i class="csi-glider" aria-hidden="true"></i></div>
+              <div class="csi-tools">
+                <label class="csi-search">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+                  <input id="csiSearch" type="text" placeholder="Search items" autocomplete="off" spellcheck="false" />
+                  <kbd>/</kbd>
+                </label>
+                <div class="csi-drop" id="csiSortDrop">
+                  <button type="button" class="csi-btn csi-btn-ghost csi-drop-btn" id="csiSortBtn" aria-haspopup="listbox" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5" /></svg>
+                    <span id="csiSortLabel">Rarity</span>
+                  </button>
+                  <div class="csi-drop-menu" id="csiSortMenu" role="listbox" hidden></div>
+                </div>
+                <button type="button" class="csi-btn csi-btn-ghost" id="csiFilterBtn" aria-expanded="false" aria-controls="csiFilters">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" /></svg>
+                  Filters<b id="csiFilterCount" hidden></b>
+                </button>
+              </div>
+            </div>
+
+            <div class="csi-filters" id="csiFilters" hidden>
+              <div class="csi-filter-group">
+                <p>Rarity</p>
+                <div class="csi-rarities" id="csiRarities"></div>
+              </div>
+              <div class="csi-filter-group">
+                <p>Trade</p>
+                <div class="segmented csi-seg" id="csiTradeSeg">
+                  <button type="button" data-trade="any" class="active">Any</button>
+                  <button type="button" data-trade="tradable">Tradable</button>
+                  <button type="button" data-trade="locked">Locked</button>
+                </div>
+              </div>
+              <div class="csi-filter-group">
+                <p>Show only</p>
+                <div class="csi-flags" id="csiFlags">
+                  <button type="button" class="csi-flag" data-flag="statTrak">StatTrak</button>
+                  <button type="button" class="csi-flag" data-flag="souvenir">Souvenir</button>
+                  <button type="button" class="csi-flag" data-flag="stickers">Stickers applied</button>
+                  <button type="button" class="csi-flag" data-flag="nametag">Name tag</button>
+                </div>
+              </div>
+              <div class="csi-filter-group csi-filter-view">
+                <p>View</p>
+                <label class="csi-switch"><input type="checkbox" id="csiStack" checked /><i></i><span>Stack duplicates</span></label>
+                <label class="csi-size"><span>Card size</span><input type="range" id="csiSize" min="130" max="230" step="10" value="170" /></label>
+                <button type="button" class="text-btn csi-clear" id="csiClear">Clear filters</button>
+              </div>
+            </div>
+
+            <p class="csi-status" id="csiStatus"></p>
+            <div class="csi-grid" id="csiGrid" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="humanizer">
+          <div id="hzPage"></div>
+        </section>
+
+        <section class="tab-panel" id="visual">
+          <div class="page-grid">
+            <article class="card">
+              <p class="eyebrow">OVERLAY</p>
+              <h2>Draw on game</h2>
+              <p class="panel-copy">
+                Click-through FOV circles, the locked target box, and selected-bone points for each enabled module.
+              </p>
+              <label class="setting-toggle">
+                <span>
+                  <strong>Target box</strong>
+                  <small>Outline of the detection box on the target you are locked onto</small>
+                </span>
+                <input type="checkbox" id="vis_target_box" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-rp-aim">
+                <span>
+                  <strong>Aim assist bones</strong>
+                  <small>Selected bones that can trigger hardware slowdown</small>
+                </span>
+                <input type="checkbox" id="vis_rp_aim_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-rp-aim">
+                <span>
+                  <strong>Aim assist margin</strong>
+                  <small>Extra radius drawn around each Slow on bone</small>
+                </span>
+                <input type="checkbox" id="vis_rp_aim_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-rp-one-tap">
+                <span>
+                  <strong>One tap assist FOV</strong>
+                  <small>Small engage circle from the One tap assist tab</small>
+                </span>
+                <input type="checkbox" id="vis_rp_one_tap_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-rp-one-tap">
+                <span>
+                  <strong>One tap reset FOV</strong>
+                  <small>Wider circle that clears one-tap cooldown</small>
+                </span>
+                <input type="checkbox" id="vis_rp_one_tap_reset" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-rp-one-tap">
+                <span>
+                  <strong>One tap head</strong>
+                  <small>Head bone the intercept aims onto</small>
+                </span>
+                <input type="checkbox" id="vis_rp_one_tap_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-prediction">
+                <span>
+                  <strong>Prediction guide</strong>
+                  <small>Leaded box, and a line from the player to where the modules are aiming</small>
+                </span>
+                <input type="checkbox" id="vis_prediction" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-aim-director">
+                <span>
+                  <strong>Aim director FOV</strong>
+                  <small>Continuous pull range from the Aim director tab</small>
+                </span>
+                <input type="checkbox" id="vis_aim_director_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-aim-director">
+                <span>
+                  <strong>Aim director point</strong>
+                  <small>Selected bones that can receive the continuous pull</small>
+                </span>
+                <input type="checkbox" id="vis_aim_director_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-aim-corrector">
+                <span>
+                  <strong>Aim corrector FOV</strong>
+                  <small>Path-correction range from the Aim corrector tab</small>
+                </span>
+                <input type="checkbox" id="vis_aim_corrector_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-aim-corrector">
+                <span>
+                  <strong>Aim corrector point</strong>
+                  <small>Selected bone used to bend the mouse path</small>
+                </span>
+                <input type="checkbox" id="vis_aim_corrector_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-tracking-assist">
+                <span>
+                  <strong>Tracking assist FOV</strong>
+                  <small>Small retention zone from the Tracking tab</small>
+                </span>
+                <input type="checkbox" id="vis_tracking_assist_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-tracking-assist">
+                <span>
+                  <strong>Tracking box</strong>
+                  <small>Locked player box. Retention uses the center of this box.</small>
+                </span>
+                <input type="checkbox" id="vis_tracking_assist_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-spray-acquire">
+                <span>
+                  <strong>Spray assist FOV</strong>
+                  <small>Horizontal range from the Spray assist tab</small>
+                </span>
+                <input type="checkbox" id="vis_spray_acquire_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-spray-acquire">
+                <span>
+                  <strong>Spray assist box</strong>
+                  <small>Locked player box. The horizontal pull aims at the center of this box.</small>
+                </span>
+                <input type="checkbox" id="vis_spray_acquire_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-tap">
+                <span>
+                  <strong>Tap FOV</strong>
+                  <small>Click-nudge range from the Tap assist tab</small>
+                </span>
+                <input type="checkbox" id="vis_tap_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-tap">
+                <span>
+                  <strong>Tap point</strong>
+                  <small>Selected bone used by the click-time nudge</small>
+                </span>
+                <input type="checkbox" id="vis_tap_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-trigger">
+                <span>
+                  <strong>Trigger FOV</strong>
+                  <small>Hold-fire radius from the Trigger tab</small>
+                </span>
+                <input type="checkbox" id="vis_trigger_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-trigger">
+                <span>
+                  <strong>Trigger points</strong>
+                  <small>Every selected bone that can activate hold-fire</small>
+                </span>
+                <input type="checkbox" id="vis_trigger_spot" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-magnet">
+                <span>
+                  <strong>Magnet FOV</strong>
+                  <small>Pull and fire circles from the Magnet trigger tab</small>
+                </span>
+                <input type="checkbox" id="vis_magnet_fov" />
+                <i></i>
+              </label>
+              <label class="setting-toggle vis-need-magnet">
+                <span>
+                  <strong>Magnet points</strong>
+                  <small>Pull bones and fire-on bones in their matching colors</small>
+                </span>
+                <input type="checkbox" id="vis_magnet_spot" />
+                <i></i>
+              </label>
+            </article>
+            <article class="card">
+              <p class="eyebrow">KEY</p>
+              <h2>Colors</h2>
+              <ul class="vis-legend">
+                <li><i class="vis-swatch vis-swatch-target"></i><span>Target box</span></li>
+                <li class="vis-need-rp-aim"><i class="vis-swatch has-spot vis-swatch-rp-aim"></i><span>Aim assist bones / margin</span></li>
+                <li class="vis-need-rp-one-tap"><i class="vis-swatch has-spot vis-swatch-rp-one-tap"></i><span>One tap assist FOV / head</span></li>
+                <li class="vis-need-aim-director"><i class="vis-swatch has-spot vis-swatch-aim-director"></i><span>Aim director FOV / point</span></li>
+                <li class="vis-need-aim-corrector"><i class="vis-swatch has-spot vis-swatch-aim-corrector"></i><span>Aim corrector FOV / point</span></li>
+                <li class="vis-need-tracking-assist"><i class="vis-swatch has-spot vis-swatch-tracking-assist"></i><span>Tracking assist FOV / box</span></li>
+                <li class="vis-need-spray-acquire"><i class="vis-swatch has-spot vis-swatch-spray-acquire"></i><span>Spray assist FOV / box</span></li>
+                <li class="vis-need-tap"><i class="vis-swatch has-spot vis-swatch-tap"></i><span>Tap FOV / point</span></li>
+                <li class="vis-need-trigger"><i class="vis-swatch has-spot vis-swatch-trigger"></i><span>Trigger FOV / points</span></li>
+                <li class="vis-need-magnet"><i class="vis-swatch has-spot vis-swatch-magnet"></i><span>Magnet pull FOV / points</span></li>
+                <li class="vis-need-magnet"><i class="vis-swatch has-spot vis-swatch-magnet-fire"></i><span>Magnet fire FOV / points</span></li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="director">
+          <div class="page-grid">
+            <article class="card card-aim-director">
+              <p class="eyebrow">MAGNET</p>
+              <h2>Aim director</h2>
+              <div class="setting-row director-mode-row">
+                <span>
+                  <strong>Mode</strong>
+                  <small id="aimDirectorModeHint">Pulls whenever a picked bone is inside FOV.</small>
+                </span>
+                <div class="segmented director-mode-seg" id="aimDirectorModeSeg">
+                  <button type="button" data-director-mode="always" class="active">Always on</button>
+                  <button type="button" data-director-mode="toggle">Toggle</button>
+                  <button type="button" data-director-mode="hold">Hold</button>
+                </div>
+                <input type="hidden" id="aim_director_mode" value="always" />
+              </div>
+              <div class="setting-row director-key-row" id="aimDirectorKeyRow" hidden>
+                <span>
+                  <strong>Key</strong>
+                  <small id="aimDirectorKeyHint">Press to turn the pull on or off.</small>
+                </span>
+                <button type="button" class="bind-btn is-unbound" id="aim_director_key" data-bind="aim_director_key">Unbound</button>
+              </div>
+              <div class="bone-box">
+                <div class="bone-box-head">
+                  <span>Bones</span>
+                  <button type="button" class="script-bone-editor" data-bone-studio="director">Bone editor</button>
+                </div>
+                <div class="bone-summary-row">
+                  <strong>Pull toward</strong>
+                  <small id="aim_director_bone_summary">—</small>
+                </div>
+                <input type="hidden" id="aim_director_bone" />
+              </div>
+              <label class="setting-row control">
+                <span>
+                  <strong>FOV</strong>
+                  <small>Director stays off until one of the selected bones is inside this circle.</small>
+                </span>
+                <output for="aim_director_radius">120 px</output>
+                <input type="range" id="aim_director_radius" min="20" max="180" step="1" value="120" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Force</strong>
+                  <small>Continuous pull rate. 100% is what 50% was on the previous scale.</small>
+                </span>
+                <output for="aim_director_strength">12%</output>
+                <input type="range" id="aim_director_strength" min="0" max="100" step="1" value="12" />
+              </label>
+              <div class="setting-row curve-row">
+                <span>
+                  <strong>Curve</strong>
+                  <small>How pull holds from the FOV edge onto the bone. Ease out / expo keep more of it close-in.</small>
+                </span>
+                <input type="hidden" id="aim_director_curve" value="ease_out" />
+                <button type="button" class="curve-btn" id="aim_director_curve_btn" data-curve-for="aim_director_curve">Ease out</button>
+              </div>
+              <div class="curve-pop" id="aimDirectorCurvePop" hidden></div>
+              <label class="setting-toggle">
+                <span>
+                  <strong>Deadzone</strong>
+                  <small>Stop pulling once the bone is inside this inner circle so you are not glued on.</small>
+                </span>
+                <input type="checkbox" id="aim_director_deadzone" checked />
+                <i></i>
+              </label>
+              <label class="setting-row control" id="aimDirectorDeadzoneRow">
+                <span>
+                  <strong>Deadzone size</strong>
+                  <small>No director pull inside this radius of the selected bone.</small>
+                </span>
+                <output for="aim_director_deadzone_px">10 px</output>
+                <input type="range" id="aim_director_deadzone_px" min="2" max="40" step="1" value="10" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Max force</strong>
+                  <small>Largest step per update. Above 8 px the pull also closes faster.</small>
+                </span>
+                <output for="aim_director_max_step">2.0 px</output>
+                <input type="range" id="aim_director_max_step" min="0" max="100" step="0.1" value="2" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Humanizer</strong>
+                  <small>Blends in your own recorded aim: the path curve, how your speed is spread along a flick, your overshoot and your micro-jitter. Never slows the pull down. 0% is off. Needs a Humanizer run.</small>
+                </span>
+                <output for="aim_director_humanizer">0%</output>
+                <input type="range" id="aim_director_humanizer" min="0" max="100" step="1" value="0" />
+              </label>
+            </article>
+            <article class="card card-info card-aim-director">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>When one of the selected bones on a freshly detected player enters its FOV, and the Mode allows it: always, after pressing the key (Toggle), or while the key is held (Hold).</p></div>
+                <div><strong>Changes</strong><p>Pulls toward the closest selected bone. Move toward a different selected bone and the pull switches to it, then stays there when you stop. Force is the closing rate (100% is the previous 50%), Curve holds more of that pull as you get closer, and Max force caps each update.</p></div>
+                <div><strong>Helps</strong><p>Guides you onto the bone. Ease out / Ease out expo stay stronger up close; Ease in waits until you are near the bone. Deadzone leaves the last few pixels alone.</p></div>
+                <div><strong>Releases</strong><p>Stops inside the deadzone, the instant you move away, at the FOV edge, and never steps through the aim point.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="prediction">
+          <div class="page-grid">
+            <article class="card card-prediction">
+              <p class="eyebrow">LEADING</p>
+              <h2>Target prediction</h2>
+              <label class="setting-row control">
+                <span>
+                  <strong>Extra lead</strong>
+                  <small>Added on top of the delay Argus measures itself (capture, detection, and how old the frame is). Raise it if shots land behind a moving player.</small>
+                </span>
+                <output for="prediction_lead_ms">12 ms</output>
+                <input type="range" id="prediction_lead_ms" min="0" max="120" step="1" value="12" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Lead strength</strong>
+                  <small>How much of the computed lead is applied. 100% aims exactly where the player is predicted to be.</small>
+                </span>
+                <output for="prediction_strength">100%</output>
+                <input type="range" id="prediction_strength" min="0" max="150" step="5" value="100" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Max lead</strong>
+                  <small>Hard ceiling on how far the aim point may move ahead, so a bad reading can never throw it off the player.</small>
+                </span>
+                <output for="prediction_max_px">60 px</output>
+                <input type="range" id="prediction_max_px" min="4" max="200" step="2" value="60" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Smoothing</strong>
+                  <small>Frames used to measure speed. More is steadier but slower to notice a change of direction.</small>
+                </span>
+                <output for="prediction_track_frames">8 frames</output>
+                <input type="range" id="prediction_track_frames" min="4" max="20" step="1" value="8" />
+              </label>
+              <p class="panel-copy">Prediction moves the aim point for every module that aims: director, corrector, tracking, spray, tap, one tap, trigger and magnet all follow it. Turn on <b>Prediction guide</b> in the Visual tab to see the leaded box on screen.</p>
+            </article>
+            <article class="card card-info card-prediction">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>The problem</strong><p>A player's position on screen moves both when they move and when you turn your view. Leading on the raw screen motion would aim into empty space every time you flick.</p></div>
+                <div><strong>Your view</strong><p>Mouse counts are read through Raw Input and converted to pixels, which is how far a standing still player appears to slide. Subtracting that leaves only the player's own motion.</p></div>
+                <div><strong>The check</strong><p>With three or more players on screen the view turn is measured from how they shift together, needing no calibration, and that corrects the counts-to-pixels number for scoping or a wrong DPI.</p></div>
+                <div><strong>Backs off</strong><p>Speed comes from a fit over several frames, not two, so box jitter does not become false motion. Confidence falls on flicks, target switches and still players, and the lead shrinks with it.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="corrector">
+          <div class="page-grid">
+            <article class="card card-aim-corrector">
+              <p class="eyebrow">PATH</p>
+              <h2>Aim corrector</h2>
+              <div class="bone-box">
+                <div class="bone-box-head">
+                  <span>Bones</span>
+                  <button type="button" class="script-bone-editor" data-bone-studio="corrector">Bone editor</button>
+                </div>
+                <div class="bone-summary-row">
+                  <strong>Correct around</strong>
+                  <small id="aim_corrector_bone_summary">—</small>
+                </div>
+                <input type="hidden" id="aim_corrector_bone" />
+              </div>
+              <label class="setting-row control">
+                <span>
+                  <strong>FOV</strong>
+                  <small>Path correction only runs inside this selected-bone range.</small>
+                </span>
+                <output for="aim_corrector_radius">100 px</output>
+                <input type="range" id="aim_corrector_radius" min="20" max="160" step="1" value="100" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Correction</strong>
+                  <small>Share of Max bend used while the flick is still off the bone's height. 50% uses the full bend.</small>
+                </span>
+                <output for="aim_corrector_strength">18%</output>
+                <input type="range" id="aim_corrector_strength" min="0" max="50" step="1" value="18" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Max bend</strong>
+                  <small>Largest allowed path-angle change in one update.</small>
+                </span>
+                <output for="aim_corrector_max_bend">7°</output>
+                <input type="range" id="aim_corrector_max_bend" min="1" max="45" step="0.5" value="7" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Humanizer</strong>
+                  <small>Blends in your own recorded aim: the sideways shape of your path, plus your micro-jitter. 0% is off. Needs a Humanizer run.</small>
+                </span>
+                <output for="aim_corrector_humanizer">0%</output>
+                <input type="range" id="aim_corrector_humanizer" min="0" max="100" step="1" value="0" />
+              </label>
+            </article>
+            <article class="card card-info card-aim-corrector">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>When the selected bone is in FOV, ahead of your current mouse path, and close enough to be a plausible correction rather than a new target.</p></div>
+                <div><strong>Changes</strong><p>Bends the path toward the selected bone's height as soon as it is inside FOV, up to Max bend. Correction is how much of that bend is used. It adds no forward acceleration, and the bend eases off as the heights meet.</p></div>
+                <div><strong>Helps</strong><p>Does most of the height correction early, then leaves the rest of the flick straight once you are at the bone's height.</p></div>
+                <div><strong>Releases</strong><p>When stationary, moving past or behind the target, outside FOV, on a wide turn, or when detection becomes stale.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tracking">
+          <div class="page-grid">
+            <article class="card card-tracking-assist">
+              <p class="eyebrow">RETENTION</p>
+              <h2>Tracking assist</h2>
+              <label class="setting-row control">
+                <span>
+                  <strong>Hold radius</strong>
+                  <small>Small zone around the center of the player box where retention can engage after settling.</small>
+                </span>
+                <output for="tracking_assist_radius">34 px</output>
+                <input type="range" id="tracking_assist_radius" min="6" max="60" step="1" value="34" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Retention</strong>
+                  <small>Fraction of small outward drift that is softened, never reversed.</small>
+                </span>
+                <output for="tracking_assist_strength">12%</output>
+                <input type="range" id="tracking_assist_strength" min="0" max="50" step="1" value="12" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Breakaway speed</strong>
+                  <small>Mouse speed where retention fully yields to your movement.</small>
+                </span>
+                <output for="tracking_assist_breakaway">9 px</output>
+                <input type="range" id="tracking_assist_breakaway" min="2" max="500" step="0.5" value="9" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Humanizer</strong>
+                  <small>Blends in your own recorded aim: the sideways shape of your path, plus your micro-jitter. 0% is off. Needs a Humanizer run.</small>
+                </span>
+                <output for="tracking_assist_humanizer">0%</output>
+                <input type="range" id="tracking_assist_humanizer" min="0" max="100" step="1" value="0" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Settle time</strong>
+                  <small>How long the same nearby player must stay acquired first.</small>
+                </span>
+                <output for="tracking_assist_dwell_ms">100 ms</output>
+                <input type="range" id="tracking_assist_dwell_ms" min="0" max="300" step="10" value="100" />
+              </label>
+            </article>
+            <article class="card card-info card-tracking-assist">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Only after the center of the same player box stays inside Hold radius for the full Settle time and your mouse begins drifting outward slowly.</p></div>
+                <div><strong>Changes</strong><p>Cancels only the configured fraction of outward movement. It never reverses that movement and never generates movement at rest.</p></div>
+                <div><strong>Helps</strong><p>Softens tiny tracking slips after you have already acquired the player; it does not find or follow targets for you.</p></div>
+                <div><strong>Releases</strong><p>Immediately at Breakaway speed, outside Hold radius, after a target switch, or when detection becomes stale.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="spray">
+          <div class="page-grid">
+            <article class="card card-spray-acquire">
+              <p class="eyebrow">SPRAY</p>
+              <h2>Spray assist</h2>
+              <label class="setting-row control">
+                <span>
+                  <strong>FOV</strong>
+                  <small>Spray assist stays off until the closest player is inside this circle.</small>
+                </span>
+                <output for="spray_acquire_radius">90 px</output>
+                <input type="range" id="spray_acquire_radius" min="20" max="180" step="1" value="90" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Force</strong>
+                  <small>Horizontal closing rate while left mouse is held. Higher values close faster.</small>
+                </span>
+                <output for="spray_acquire_strength">25%</output>
+                <input type="range" id="spray_acquire_strength" min="0" max="100" step="1" value="25" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Max force</strong>
+                  <small>Largest horizontal step per update. Above 8 px the pull also closes faster.</small>
+                </span>
+                <output for="spray_acquire_max_step">2.0 px</output>
+                <input type="range" id="spray_acquire_max_step" min="0" max="100" step="0.1" value="2" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Humanizer</strong>
+                  <small>Blends in your own recorded aim: mostly your micro-jitter, since this module only slides sideways. 0% is off. Needs a Humanizer run.</small>
+                </span>
+                <output for="spray_acquire_humanizer">0%</output>
+                <input type="range" id="spray_acquire_humanizer" min="0" max="100" step="1" value="0" />
+              </label>
+              <div class="setting-row control dual-range">
+                <span>
+                  <strong>Switch delay</strong>
+                  <small>After the spray moves to a different player, wait a random time in this range before sliding onto them. Both ends at 0 switches straight away.</small>
+                </span>
+                <div class="dual-range-outputs">
+                  <output for="spray_switch_delay_ms">0 ms</output>
+                  <i aria-hidden="true">to</i>
+                  <output for="spray_switch_delay_max_ms" class="is-max">0 ms</output>
+                </div>
+                <div class="dual-range-track">
+                  <span class="dual-range-fill"></span>
+                  <input type="range" class="range-min" id="spray_switch_delay_ms" min="0" max="600" step="5" value="0" />
+                  <input type="range" class="range-max" id="spray_switch_delay_max_ms" min="0" max="600" step="5" value="0" />
+                </div>
+              </div>
+            </article>
+            <article class="card card-info card-spray-acquire">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Only while left mouse is physically held, Spray assist is enabled, and the closest player is inside FOV.</p></div>
+                <div><strong>Changes</strong><p>Applies a light, frame-rate-independent slide on X only toward that player's center. Recoil and vertical aim stay entirely yours. Force sets the closing rate and Max force caps each update.</p></div>
+                <div><strong>Helps</strong><p>Walks the crosshair onto the closest player during a spray, then sits still so your own tracking and spray control take over.</p></div>
+                <div><strong>Switching</strong><p>The first player of a spray is taken straight away. If the spray then moves to a different player, Switch delay holds it back for a random time from that range before it slides onto the new one. Releasing left click clears the wait, so the next spray starts fresh.</p></div>
+                <div><strong>Releases</strong><p>Stops as soon as you are horizontally on the player, eases in after mouse-down, yields if you aim away, and never steps through the aim point.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="onetap" data-tab-panel="onetap">
+          <div class="page-grid">
+            <article class="card card-rp-one-tap">
+              <p class="eyebrow">RP2040</p>
+              <h2>One tap assist</h2>
+              <p class="panel-copy">
+                On an armed left-down the Feather withholds the click from the game and Argus starts easing onto the head. A tap (release inside Hold window) then clicks; a hold is released as a spray.
+              </p>
+              <label class="setting-row control">
+                <span>
+                  <strong>FOV</strong>
+                  <small>Only arms when the head is inside this circle. Outside it the click is passed straight through with no correction, so too small a value makes the module look like it does nothing.</small>
+                </span>
+                <output for="rp_one_tap_fov">15 px</output>
+                <input type="range" id="rp_one_tap_fov" min="2" max="80" step="1" value="30" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Reset FOV</strong>
+                  <small>Leaving this wider circle clears cooldown so the next tap can intercept again.</small>
+                </span>
+                <output for="rp_one_tap_reset_fov">48 px</output>
+                <input type="range" id="rp_one_tap_reset_fov" min="4" max="160" step="1" value="70" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Speed</strong>
+                  <small>How fast the flick travels. A longer correction takes proportionally longer, so it never turns into one instant jump. Capped by the Hold window so the move lands before the click.</small>
+                </span>
+                <output for="rp_one_tap_speed">2200 px/s</output>
+                <input type="range" id="rp_one_tap_speed" min="200" max="8000" step="50" value="2200" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Smoothness</strong>
+                  <small>Shape of the flick. 0% is a flat constant-speed slide. Higher eases out of the start and settles onto the head instead of stopping dead.</small>
+                </span>
+                <output for="rp_one_tap_smooth">65%</output>
+                <input type="range" id="rp_one_tap_smooth" min="0" max="100" step="1" value="65" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Humanizer</strong>
+                  <small>Replaces the smoothing curve above with your own recorded flick shape. Lands at the same moment, and is never behind the built-in curve. 0% is off. Needs a Humanizer run.</small>
+                </span>
+                <output for="rp_one_tap_humanizer">0%</output>
+                <input type="range" id="rp_one_tap_humanizer" min="0" max="100" step="1" value="0" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Cooldown</strong>
+                  <small>After any physical left click, wait this long before intercepting again.</small>
+                </span>
+                <output for="rp_one_tap_cooldown">280 ms</output>
+                <input type="range" id="rp_one_tap_cooldown" min="80" max="600" step="10" value="280" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Hold window</strong>
+                  <small>If you are still holding at the end of this window, it is a spray and the click is released. Shorter feels snappier; longer catches slower taps.</small>
+                </span>
+                <output for="rp_one_tap_hold">32 ms</output>
+                <input type="range" id="rp_one_tap_hold" min="20" max="60" step="1" value="32" />
+              </label>
+            </article>
+            <article class="card card-info card-rp-one-tap">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Only while the head is inside FOV, cooldown is clear, capture is running, and the RP2040 is connected. Unarmed clicks are never delayed.</p></div>
+                <div><strong>Changes</strong><p>Withholds an armed left-down on the Feather. The crosshair starts easing onto the head on press. A tap (release inside Hold window) is consumed and a click is injected after the snap. A hold past the window is forwarded as a spray with no injected click.</p></div>
+                <div><strong>Helps</strong><p>Cleans a first tap onto the head without eating sprays or rapid follow-up shots on the same player.</p></div>
+                <div><strong>Releases</strong><p>Does not intercept again until Cooldown expires or the head leaves Reset FOV. Firmware auto-disarms within 300ms if the app or link dies, so clicks cannot stay swallowed.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tap">
+          <div class="page-grid">
+            <article class="card card-tap">
+              <p class="eyebrow">CLICK</p>
+              <h2>Tap assist</h2>
+              <label class="setting-toggle vis-need-fire">
+                <span>
+                  <strong>Nudge trigger clicks</strong>
+                  <small>Same nudge whenever trigger or magnet trigger sends left-click.</small>
+                </span>
+                <input type="checkbox" id="tap_on_trigger" />
+                <i></i>
+              </label>
+              <div class="tap-body">
+                <div class="bone-box">
+                  <div class="bone-box-head">
+                    <span>Bones</span>
+                    <button type="button" class="script-bone-editor" data-bone-studio="tap">Bone editor</button>
+                  </div>
+                  <div class="bone-summary-row">
+                    <strong>Nudge toward</strong>
+                    <small id="tap_bone_summary">—</small>
+                  </div>
+                  <input type="hidden" id="tap_bone" />
+                </div>
+                <label class="setting-row control">
+                  <span>
+                    <strong>FOV</strong>
+                    <small>Click nudge only fires if the selected bone is inside this circle.</small>
+                  </span>
+                  <output for="tap_range">0</output>
+                  <input type="range" id="tap_range" min="5" max="150" step="1" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Max nudge</strong>
+                    <small>Largest extra move on a single left-click.</small>
+                  </span>
+                  <output for="tap_max_nudge">0</output>
+                  <input type="range" id="tap_max_nudge" min="0" max="120" step="1" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Humanizer</strong>
+                    <small>Adds a touch of your own hand tremor across the nudge. The nudge still travels its full distance, so it can never land short. 0% is off. Needs a Humanizer run.</small>
+                  </span>
+                  <output for="tap_humanizer">0%</output>
+                  <input type="range" id="tap_humanizer" min="0" max="100" step="1" value="0" />
+                </label>
+              </div>
+            </article>
+            <article class="card card-info card-tap">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Once on the rising edge of a physical left-click when the selected bone is inside FOV. Holding the button does not repeat it.</p></div>
+                <div><strong>Changes</strong><p>Adds one movement toward the selected bone, capped by Max nudge and never allowed to step past the current aim point.</p></div>
+                <div><strong>Helps</strong><p>Cleans up a small final error at shot time without continuously steering your normal mouse movement.</p></div>
+                <div><strong>Optional</strong><p>Nudge trigger clicks applies the same one-shot correction to clicks sent by Trigger or Magnet trigger.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="trigger">
+          <div class="page-grid">
+            <article class="card card-trigger">
+              <p class="eyebrow">FIRE</p>
+              <h2>Trigger</h2>
+              <div class="trigger-body">
+                <label class="field">
+                  <span>Hold key</span>
+                  <button type="button" class="bind-btn is-unbound" id="hold_trigger" data-bind="hold_trigger">Unbound</button>
+                </label>
+                <div class="bone-box">
+                  <div class="bone-box-head">
+                    <span>Bones</span>
+                    <button type="button" class="script-bone-editor" data-bone-studio="trigger">Bone editor</button>
+                  </div>
+                  <div class="bone-summary-row">
+                    <strong>Fire on</strong>
+                    <small id="trigger_bones_summary">—</small>
+                  </div>
+                  <input type="hidden" id="trigger_bones" />
+                </div>
+                <label class="setting-row control">
+                  <span>
+                    <strong>FOV</strong>
+                    <small>Fire only while the selected bone is inside this circle. 0 is on-bone.</small>
+                  </span>
+                  <output for="trigger_radius">0</output>
+                  <input type="range" id="trigger_radius" min="0" max="80" step="1" />
+                </label>
+                <label class="setting-toggle">
+                  <span>
+                    <strong>Humanized delay</strong>
+                    <small data-human-delay-hint>Uses your recorded click reactions.</small>
+                  </span>
+                  <input type="checkbox" id="trigger_humanized_delay" />
+                  <i></i>
+                </label>
+                <label class="setting-row control" id="triggerInitialDelayRow">
+                  <span>
+                    <strong>Initial delay</strong>
+                    <small>Wait this long after the crosshair lands on a bone before the first click. 0 fires straight away.</small>
+                  </span>
+                  <output for="trigger_initial_delay_ms">0 ms</output>
+                  <input type="range" id="trigger_initial_delay_ms" min="0" max="500" step="5" value="0" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Humanizer</strong>
+                    <small>Adds a touch of your own hand tremor across the nudge. The nudge still travels its full distance, so it can never land short. 0% is off. Needs a Humanizer run.</small>
+                  </span>
+                  <output for="trigger_humanizer">0%</output>
+                  <input type="range" id="trigger_humanizer" min="0" max="100" step="1" value="0" />
+                </label>
+                <div class="setting-row control dual-range">
+                  <span>
+                    <strong>Interval</strong>
+                    <small>Waits a random time in this range between hold-fire clicks. Set both ends the same for a fixed wait.</small>
+                  </span>
+                  <div class="dual-range-outputs">
+                    <output for="trigger_interval_ms">295 ms</output>
+                    <i aria-hidden="true">to</i>
+                    <output for="trigger_interval_max_ms" class="is-max">360 ms</output>
+                  </div>
+                  <div class="dual-range-track">
+                    <span class="dual-range-fill"></span>
+                    <input type="range" class="range-min" id="trigger_interval_ms" min="20" max="600" step="5" value="295" />
+                    <input type="range" class="range-max" id="trigger_interval_max_ms" min="20" max="600" step="5" value="360" />
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="card card-info card-trigger">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Only while the Hold key is physically held and the crosshair overlaps a selected Fire on bone plus its FOV allowance.</p></div>
+                <div><strong>Changes</strong><p>Waits out the Initial delay after landing on a bone, then sends left-clicks no faster than a random wait picked from the Interval range each time, so the pace does not lock into a fixed rhythm. Trigger itself never moves or pulls the cursor.</p></div>
+                <div><strong>Helps</strong><p>Handles shot timing after you place the crosshair, while leaving acquisition and tracking completely manual.</p></div>
+                <div><strong>Combines</strong><p>Can run beside Magnet trigger independently. Tap's Nudge trigger clicks option may add a shot-time nudge if enabled.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="magnet-panel" data-tab-panel="magnet">
+          <div class="page-grid">
+            <article class="card card-magnet">
+              <p class="eyebrow">PULL</p>
+              <h2>Magnet trigger</h2>
+              <div class="magnet-body">
+                <label class="field">
+                  <span>Hold key</span>
+                  <button type="button" class="bind-btn is-unbound" id="magnet_key" data-bind="magnet_key">Unbound</button>
+                </label>
+                <div class="bone-box">
+                  <div class="bone-box-head">
+                    <span>Bones</span>
+                    <button type="button" class="script-bone-editor" data-bone-studio="magnet">Bone editor</button>
+                  </div>
+                  <div class="bone-summary-row">
+                    <strong>Fire on</strong>
+                    <small id="magnet_trigger_bones_summary">—</small>
+                  </div>
+                  <div class="bone-summary-row">
+                    <strong>Pull toward</strong>
+                    <small id="magnet_bones_summary">—</small>
+                  </div>
+                  <input type="hidden" id="magnet_trigger_bones" />
+                  <input type="hidden" id="magnet_bones" />
+                </div>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Fire FOV</strong>
+                    <small>Click only while a fire-on bone is inside this circle. 0 is on-bone.</small>
+                  </span>
+                  <output for="magnet_trigger_radius">0</output>
+                  <input type="range" id="magnet_trigger_radius" min="0" max="80" step="1" />
+                </label>
+                <label class="setting-toggle">
+                  <span>
+                    <strong>Humanized delay</strong>
+                    <small data-human-delay-hint>Uses your recorded click reactions.</small>
+                  </span>
+                  <input type="checkbox" id="magnet_trigger_humanized_delay" />
+                  <i></i>
+                </label>
+                <label class="setting-row control" id="magnetInitialDelayRow">
+                  <span>
+                    <strong>Initial delay</strong>
+                    <small>Wait this long after the crosshair lands on a fire-on bone before the first click. 0 fires straight away.</small>
+                  </span>
+                  <output for="magnet_trigger_initial_delay_ms">0 ms</output>
+                  <input type="range" id="magnet_trigger_initial_delay_ms" min="0" max="500" step="5" value="0" />
+                </label>
+                <div class="setting-row control dual-range">
+                  <span>
+                    <strong>Interval</strong>
+                    <small>Waits a random time in this range between magnet hold-fire clicks. Set both ends the same for a fixed wait.</small>
+                  </span>
+                  <div class="dual-range-outputs">
+                    <output for="magnet_trigger_interval_ms">295 ms</output>
+                    <i aria-hidden="true">to</i>
+                    <output for="magnet_trigger_interval_max_ms" class="is-max">360 ms</output>
+                  </div>
+                  <div class="dual-range-track">
+                    <span class="dual-range-fill"></span>
+                    <input type="range" class="range-min" id="magnet_trigger_interval_ms" min="20" max="600" step="5" value="295" />
+                    <input type="range" class="range-max" id="magnet_trigger_interval_max_ms" min="20" max="600" step="5" value="360" />
+                  </div>
+                </div>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Pull FOV</strong>
+                    <small>Only pull while a selected bone is inside this circle.</small>
+                  </span>
+                  <output for="magnet_radius">0</output>
+                  <input type="range" id="magnet_radius" min="0" max="200" step="1" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Speed</strong>
+                    <small>How quickly the pull closes the gap, in pixels.</small>
+                  </span>
+                  <output for="magnet_speed">17.0 px</output>
+                  <input type="range" id="magnet_speed" min="0" max="100" step="0.1" value="17" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Force</strong>
+                    <small>How much of that pull is used. 0% turns the pull off.</small>
+                  </span>
+                  <output for="magnet_strength">100%</output>
+                  <input type="range" id="magnet_strength" min="0" max="100" step="1" value="100" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Smoothness</strong>
+                    <small>Higher is softer. Lower snaps harder.</small>
+                  </span>
+                  <output for="magnet_smooth">40%</output>
+                  <input type="range" id="magnet_smooth" min="0" max="100" step="1" value="40" />
+                </label>
+                <label class="setting-row control">
+                  <span>
+                    <strong>Humanizer</strong>
+                    <small>Blends in your own recorded aim: the path curve, how your speed is spread along a pull, your overshoot and your micro-jitter. Never slows the pull down. 0% is off. Needs a Humanizer run.</small>
+                  </span>
+                  <output for="magnet_humanizer">0%</output>
+                  <input type="range" id="magnet_humanizer" min="0" max="100" step="1" value="0" />
+                </label>
+              </div>
+            </article>
+            <article class="card card-info card-magnet">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>Only while its Hold key is physically held. Pull and firing use their own independently selected bones and FOV values.</p></div>
+                <div><strong>Changes</strong><p>Applies a smoothed pull toward the nearest eligible Pull toward bone, then clicks when a Fire on bone enters the fire zone.</p></div>
+                <div><strong>Helps</strong><p>Combines short-range acquisition and shot timing in one held action. Speed is the close rate in pixels, Force is how much of it is used, and Smoothness softens the pull.</p></div>
+                <div><strong>Releases</strong><p>Immediately when the key is released or no pull bone is in FOV. Trigger can remain enabled separately with its own bind and values.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="rpaim" data-tab-panel="rpaim">
+          <div class="page-grid">
+            <article class="card card-rp-aim">
+              <p class="eyebrow">RP2040</p>
+              <h2>Aim assist</h2>
+              <p class="panel-copy">
+                Hardware slowdown: while the crosshair is over a selected bone, the Feather scales your mouse's own movement down before Windows ever sees it.
+              </p>
+              <div class="bone-box">
+                <div class="bone-box-head">
+                  <span>Bones</span>
+                  <button type="button" class="script-bone-editor" data-bone-studio="rpaim">Bone editor</button>
+                </div>
+                <div class="bone-summary-row">
+                  <strong>Slow on</strong>
+                  <small id="rp_aim_bones_summary">—</small>
+                </div>
+                <input type="hidden" id="rp_aim_bones" />
+              </div>
+              <label class="setting-row control">
+                <span>
+                  <strong>Slowdown</strong>
+                  <small>How much slower the physical mouse becomes on a selected bone. 0% is off, 95% is near-stationary.</small>
+                </span>
+                <output for="rp_aim_slowdown">45%</output>
+                <input type="range" id="rp_aim_slowdown" min="0" max="95" step="1" value="45" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Ramp in</strong>
+                  <small>How long the slowdown takes to settle after you enter a selected bone. 0 is an instant stop.</small>
+                </span>
+                <output for="rp_aim_ramp">80 ms</output>
+                <input type="range" id="rp_aim_ramp" min="0" max="200" step="5" value="80" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Ramp out</strong>
+                  <small>How long full speed takes to return after you leave a selected bone. 0 is instant. Release on shot still snaps back immediately.</small>
+                </span>
+                <output for="rp_aim_ramp_out">80 ms</output>
+                <input type="range" id="rp_aim_ramp_out" min="0" max="200" step="5" value="80" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Bone margin</strong>
+                  <small>Extra pixels around each selected bone that still count as on. Bigger engages earlier and releases later.</small>
+                </span>
+                <output for="rp_aim_radius">6 px</output>
+                <input type="range" id="rp_aim_radius" min="0" max="40" step="1" value="6" />
+              </label>
+              <label class="setting-toggle">
+                <span>
+                  <strong>Release on shot</strong>
+                  <small>Restore full mouse speed while left mouse is held so recoil control is not geared down.</small>
+                </span>
+                <input type="checkbox" id="rp_aim_release_on_shot" />
+                <i></i>
+              </label>
+            </article>
+            <article class="card card-info card-rp-aim">
+              <p class="eyebrow">BEHAVIOR</p>
+              <h2>How it works</h2>
+              <div class="behavior-info">
+                <div><strong>Activates</strong><p>While the crosshair is on a selected Slow on bone (plus Bone margin) and detection is fresh. Needs capture running and the RP2040 connected.</p></div>
+                <div><strong>Changes</strong><p>Multiplies the physical mouse's X/Y deltas inside the firmware. Ramp in eases that factor down; Ramp out eases it back when you leave a bone. Sub-count remainders are carried, so slow movement stays smooth instead of stuttering. Nothing is ever added.</p></div>
+                <div><strong>Helps</strong><p>Classic aim-slowdown feel, limited to the bones you pick: crossing a head or chest becomes sticky because your own hand movement is geared down over them.</p></div>
+                <div><strong>Releases</strong><p>Eases back over Ramp out when the crosshair leaves every selected bone. Instantly if Release on shot is on and left mouse is held. The firmware also auto-restores full speed within 300ms if the app or link ever dies mid-slowdown.</p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="settings">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">PERSONALIZE ARGUS</p>
+              <h2>Settings</h2>
+              <p>Appearance, game, and safety. Theme choices stay on this PC.</p>
+            </div>
+            <button class="reset-btn" id="resetSettings" type="button">Reset appearance</button>
+          </div>
+
+          <div class="settings-grid">
+            <article class="settings-card theme-card-wide">
+              <div class="settings-card-head">
+                <div>
+                  <span class="settings-icon">✦</span>
+                  <div>
+                    <h3>Appearance</h3>
+                    <p>Choose a visual theme. Changes apply instantly.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="theme-group">
+                <p class="theme-group-label">Static</p>
+                <div class="theme-picker">
+                  <button class="theme-option" data-theme="omega" type="button">
+                    <span class="theme-preview omega-preview"><i></i><b></b></span>
+                    <strong>Omega</strong><small>Signature green</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="neon" type="button">
+                    <span class="theme-preview neon-preview"><i></i><b></b></span>
+                    <strong>Neon</strong><small>Cyber magenta</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="aurora" type="button">
+                    <span class="theme-preview aurora-preview"><i></i><b></b></span>
+                    <strong>Aurora</strong><small>Blue-violet gradient</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="ember" type="button">
+                    <span class="theme-preview ember-preview"><i></i><b></b></span>
+                    <strong>Ember</strong><small>Warm sunset</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="violet" type="button">
+                    <span class="theme-preview violet-preview"><i></i><b></b></span>
+                    <strong>Violet</strong><small>Royal purple</small><em>✓</em>
+                  </button>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-theme="custom" id="customStaticTheme">
+                      <span class="theme-preview custom-preview" id="customStaticPreview"><i></i><b></b></span>
+                      <strong id="customStaticName">Custom</strong><small>Your colors</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-theme="custom" title="Edit theme" aria-label="Edit custom theme">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <label class="setting-toggle" id="staticGradientRow">
+                <span><strong>Accent gradients</strong><small>Fill buttons, toggles, sliders, and bars with the theme gradient</small></span>
+                <input type="checkbox" data-setting="staticGradients" /><i></i>
+              </label>
+              <div class="theme-group">
+                <p class="theme-group-label">Animated</p>
+                <div class="theme-picker">
+                  <button class="theme-option" data-theme="prism" type="button">
+                    <span class="theme-preview prism-preview"><i></i><b></b></span>
+                    <strong>Prism</strong><small>Purple to blue</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="spectrum" type="button">
+                    <span class="theme-preview spectrum-preview"><i></i><b></b></span>
+                    <strong>Spectrum</strong><small>Full RGB cycle</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="magma" type="button">
+                    <span class="theme-preview magma-preview"><i></i><b></b></span>
+                    <strong>Magma</strong><small>Lava pulse</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="tide" type="button">
+                    <span class="theme-preview tide-preview"><i></i><b></b></span>
+                    <strong>Tide</strong><small>Ocean shift</small><em>✓</em>
+                  </button>
+                  <button class="theme-option" data-theme="voltage" type="button">
+                    <span class="theme-preview voltage-preview"><i></i><b></b></span>
+                    <strong>Voltage</strong><small>Electric surge</small><em>✓</em>
+                  </button>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-theme="custom-anim" id="customAnimTheme">
+                      <span class="theme-preview custom-anim-preview" id="customAnimPreview"><i></i><b></b></span>
+                      <strong id="customAnimName">Custom</strong><small>Your animation</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-theme="custom-anim" title="Edit animated theme" aria-label="Edit custom animated theme">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <label class="setting-row" id="themeSpeedRow">
+                <span><strong>Animation speed</strong><small>How fast animated themes shift color</small></span>
+                <output id="themeSpeedValue">1.0×</output>
+                <input id="themeSpeed" type="range" min="1" max="10" step="1" value="5" />
+              </label>
+              <div class="theme-group" id="bgFxGroup">
+                <p class="theme-group-label">Interactive background</p>
+                <div class="theme-picker bg-fx-picker">
+                  <button type="button" class="theme-option" data-bg-fx="off">
+                    <span class="bg-fx-preview bg-fx-preview-off" aria-hidden="true"></span>
+                    <strong>Off</strong><small>No motion</small><em>✓</em>
+                  </button>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-bg-fx="particles">
+                      <span class="bg-fx-preview bg-fx-preview-particles" aria-hidden="true"></span>
+                      <strong>Particles</strong><small>Follow the cursor</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-bg-fx="particles" title="Edit particles" aria-label="Edit particles">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-bg-fx="neural">
+                      <span class="bg-fx-preview bg-fx-preview-neural" aria-hidden="true"></span>
+                      <strong>Neural</strong><small>Linked nodes</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-bg-fx="neural" title="Edit neural" aria-label="Edit neural">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-bg-fx="mesh">
+                      <span class="bg-fx-preview bg-fx-preview-mesh" aria-hidden="true"></span>
+                      <strong>Mesh</strong><small>Warp grid</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-bg-fx="mesh" title="Edit mesh" aria-label="Edit mesh">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-bg-fx="hive">
+                      <span class="bg-fx-preview bg-fx-preview-hive" aria-hidden="true"></span>
+                      <strong>Hive</strong><small>Hex grid</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-bg-fx="hive" title="Edit hive" aria-label="Edit hive">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                  <div class="theme-option-wrap">
+                    <button type="button" class="theme-option" data-bg-fx="stars">
+                      <span class="bg-fx-preview bg-fx-preview-stars" aria-hidden="true"></span>
+                      <strong>Stars</strong><small>Night sky</small><em>✓</em>
+                    </button>
+                    <button type="button" class="theme-edit" data-edit-bg-fx="stars" title="Edit stars" aria-label="Edit stars">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <label class="setting-toggle"><span><strong>Alternative navigation</strong><small>Use a floating top bar instead of the sidebar</small></span><input type="checkbox" data-setting="altNav" /><i></i></label>
+              <label class="setting-toggle"><span><strong>Compact navigation</strong><small>Collapse the menu to icons</small></span><input type="checkbox" data-setting="compactNav" /><i></i></label>
+              <label class="setting-toggle"><span><strong>Auto-hide navigation</strong><small>Tuck the menu away and show it when you hover the edge</small></span><input type="checkbox" data-setting="autoHideNav" /><i></i></label>
+              <label class="setting-toggle"><span><strong>Reduce motion</strong><small>Disable interface animations</small></span><input type="checkbox" data-setting="reduceMotion" /><i></i></label>
+              <div class="setting-frost">
+                <span><strong>Frosted glass navigation</strong><small>Blur the menu over the page on the sidebar and the top bar</small></span>
+                <button type="button" class="theme-edit frost-edit-btn" id="frostNavEdit" title="Edit frost strength" aria-label="Edit frost strength">
+                  <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+                </button>
+                <label class="setting-toggle frost-switch"><input type="checkbox" checked data-setting="frostNav" /><i></i></label>
+              </div>
+            </article>
+
+            <article class="settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <span class="settings-icon">⇄</span>
+                  <div>
+                    <h3>Input method</h3>
+                    <p>How Argus injects mouse output.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="segmented input-method-seg" id="inputMethodSeg">
+                <button type="button" data-input-method="windows" class="active">Windows API</button>
+                <button type="button" data-input-method="rp2040">RP2040</button>
+              </div>
+              <ol class="rp-handshake" id="rp2040-handshake" hidden data-state="idle" aria-label="RP2040 handshake">
+                <li data-step="syn"><span>SYN</span></li>
+                <li data-step="synack"><span>SYN-ACK</span></li>
+                <li data-step="ack"><span>ACK</span></li>
+              </ol>
+              <p class="rp-status" id="rp2040-status"><i></i><span>Using Windows API</span></p>
+              <label class="field">
+                <span>RP2040 device <small>Leave on "auto": it finds the Feather's command interface on its USB-C cable and completes a SYN / SYN-ACK / ACK handshake with the firmware. Only fill this in to pick between several Feathers (part of the device path).</small></span>
+                <input type="text" class="text" id="rp2040_port" placeholder="auto" autocomplete="off" spellcheck="false" />
+              </label>
+              <p class="panel-copy">
+                Windows API uses SendInput. RP2040 sends everything to the Feather over a USB HID command channel instead (one USB cable, no serial adapter), so movement and clicks come from a real HID mouse — and it unlocks Aim assist and One tap assist, which rewrite the physical mouse's packets in hardware. All other modules work the same on both. Applied on capture start.
+              </p>
+              <label class="field">
+                <span>Mouse DPI <small>Your mouse dpi.</small></span>
+                <input type="number" class="text" id="mouse_dpi" min="50" max="32000" step="50" value="800" />
+              </label>
+              <label class="field">
+                <span>In-game sensitivity <small id="mouse_sens_hint">Your in-game sensitivity.</small></span>
+                <input type="number" class="text" id="mouse_sens" min="0.0001" max="200" step="any" value="1" />
+              </label>
+            </article>
+
+            <article class="settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <span class="settings-icon">▣</span>
+                  <div>
+                    <h3>Game</h3>
+                    <p>Vision capture and detection model.</p>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="game-selected" id="game-selected">
+                <span class="game-selected-art"><img id="game-art" alt="" /></span>
+                <span class="game-selected-meta">
+                  <strong id="game-name">No game selected</strong>
+                  <small id="game-hint">click to choose game</small>
+                </span>
+              </button>
+              <div class="btn-row">
+                <button class="settings-save" id="start-capture" type="button">Start</button>
+                <button class="reset-btn" id="stop-capture" type="button">Stop</button>
+              </div>
+              <label class="setting-row control">
+                <span>
+                  <strong>Detection confidence</strong>
+                  <small>Lower values recover more small or partial players; very low values can add false detections.</small>
+                </span>
+                <output for="conf">0.30</output>
+                <input type="range" id="conf" min="0.15" max="0.80" step="0.01" value="0.30" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Mouse FPS</strong>
+                  <small>Mouse assist loop only. Detection runs as fast as the GPU allows and is not capped by this.</small>
+                </span>
+                <output for="fps">240 fps</output>
+                <input type="range" id="fps" min="30" max="600" step="10" />
+              </label>
+              <label class="setting-row control">
+                <span>
+                  <strong>Monitor</strong>
+                  <small>Which display to capture. 0 is usually your main screen.</small>
+                </span>
+                <output for="output_idx">0</output>
+                <input type="range" id="output_idx" min="0" max="3" step="1" />
+              </label>
+            </article>
+
+            <article class="settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <span class="settings-icon">⌘</span>
+                  <div>
+                    <h3>Safety</h3>
+                    <p>Inject behavior and hotkey.</p>
+                  </div>
+                </div>
+              </div>
+              <label class="setting-toggle">
+                <span>
+                  <strong>Dry run</strong>
+                  <small>Log movement without injecting it</small>
+                </span>
+                <input type="checkbox" id="dry_run" />
+                <i></i>
+              </label>
+              <label class="field">
+                <span>Toggle key</span>
+                <button type="button" class="bind-btn" id="menu_hotkey" data-bind="menu_hotkey">insert</button>
+              </label>
+              <label class="field">
+                <span>Pause key <small>Press it to hold every module off, press again to resume. Capture keeps running.</small></span>
+                <button type="button" class="bind-btn is-unbound" id="pause_hotkey" data-bind="pause_hotkey">Unbound</button>
+              </label>
+              <label class="setting-toggle">
+                <span>
+                  <strong>Pause while the menu is open</strong>
+                  <small>Nothing aims, clicks or slows your mouse while this window is showing. It resumes when you hide it.</small>
+                </span>
+                <input type="checkbox" id="auto_pause_menu" checked />
+                <i></i>
+              </label>
+            </article>
+
+            <article class="settings-card csi-settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <span class="settings-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4" /><path d="m10.8 12.2 8.7-8.7M16.5 6.5l2.5 2.5M14 9l2 2" /></svg>
+                  </span>
+                  <div>
+                    <h3>Accounts &amp; API keys</h3>
+                    <p>Steam sign-in and keys used by the CS2 inventory module.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="csi-account" id="csiAccount">
+                <span class="csi-account-avatar"><img id="csiAccountAvatar" alt="" draggable="false" /></span>
+                <span class="csi-account-copy">
+                  <strong id="csiAccountName">Steam</strong>
+                  <small id="csiAccountMeta">Not signed in</small>
+                </span>
+                <button type="button" class="reset-btn" id="csiAccountBtn">Sign in</button>
+              </div>
+              <div class="csi-keys-row">
+                <span>
+                  <strong>API keys</strong>
+                  <small id="csiKeysSummary">No keys saved</small>
+                </span>
+                <button type="button" class="settings-save" id="csiManageKeys">Manage API keys</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="logger">
+          <div class="logs-toolbar">
+            <div>
+              <p class="eyebrow">SESSION</p>
+              <h2>Logger</h2>
+              <p id="loggerPath">waiting for session file</p>
+            </div>
+            <div class="logs-tools">
+              <span class="logs-live"><i></i>LIVE</span>
+              <button type="button" class="reset-btn" id="loggerColors">Colors</button>
+              <button type="button" class="reset-btn" id="loggerExport">Export HTML</button>
+              <button type="button" class="reset-btn" id="loggerClear">Clear</button>
+              <span class="titlebar-cfg-note" id="loggerExportNote" hidden></span>
+            </div>
+          </div>
+          <div class="logs-view" id="loggerView"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="loggerColorPicker" class="confirm-overlay" hidden>
+      <div class="confirm-card log-set-card logger-color-card" role="dialog" aria-modal="true" aria-labelledby="loggerColorTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">LOGGER</p>
+            <h3 id="loggerColorTitle">Log colors</h3>
+          </div>
+          <button type="button" class="reset-btn log-set-close" id="loggerColorClose">Close</button>
+        </div>
+        <p class="log-set-hint">Pick a color for each tag. The live view and HTML export both use these.</p>
+        <div class="logger-color-grid" id="loggerColorGrid"></div>
+      </div>
+    </div>
+
+    <div id="configDeletePicker" class="confirm-overlay" hidden>
+      <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="configDeleteTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">CONFIG</p>
+            <h3 id="configDeleteTitle">Delete config</h3>
+          </div>
+        </div>
+        <p id="configDeleteText">Delete this config? This cannot be undone.</p>
+        <div class="confirm-actions">
+          <button type="button" class="reset-btn" id="configDeleteCancel">Cancel</button>
+          <button type="button" class="danger-btn" id="configDeleteConfirm">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="configNamePicker" class="confirm-overlay" hidden>
+      <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="configNameTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">CONFIG</p>
+            <h3 id="configNameTitle">New config</h3>
+          </div>
+        </div>
+        <label class="theme-edit-name">
+          <span>Name</span>
+          <input id="configNameInput" type="text" maxlength="32" autocomplete="off" spellcheck="false" placeholder="My config" />
+        </label>
+        <div class="confirm-actions">
+          <button type="button" class="reset-btn" id="configNameCancel">Cancel</button>
+          <button type="button" class="settings-save" id="configNameCreate">Create</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gamePicker" class="confirm-overlay" hidden>
+      <div class="confirm-card game-picker-card" role="dialog" aria-modal="true" aria-labelledby="gamePickerTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M8 9h8M8 13h5" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">MODEL</p>
+            <h3 id="gamePickerTitle">Choose game</h3>
+          </div>
+          <button type="button" class="reset-btn log-set-close" id="gamePickerClose">Close</button>
+        </div>
+        <div class="game-picker-grid" id="gamePickerGrid"></div>
+      </div>
+    </div>
+
+    <div id="themeEditor" class="confirm-overlay log-set-overlay" hidden>
+      <div class="confirm-card log-set-card theme-edit-card" role="dialog" aria-modal="true" aria-labelledby="themeEditTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">APPEARANCE</p>
+            <h3 id="themeEditTitle">Edit theme</h3>
+          </div>
+          <button type="button" class="reset-btn log-set-close" id="themeEditorClose">Close</button>
+        </div>
+        <label class="theme-edit-name">
+          <span>Name</span>
+          <input id="themeEditName" type="text" maxlength="18" autocomplete="off" spellcheck="false" />
+        </label>
+        <p class="eyebrow theme-edit-colors-label">COLORS</p>
+        <div class="theme-edit-colors" id="themeEditColors">
+          <label class="theme-edit-color"><span>Primary</span><input type="color" class="log-color" data-theme-color="accent" /></label>
+          <label class="theme-edit-color"><span>Secondary</span><input type="color" class="log-color" data-theme-color="accent2" /></label>
+        </div>
+        <div id="themeEditGradientBlock">
+          <p class="log-set-hint" id="themeEditHint">Mix is where the colors meet. Fade is how soft that edge is. Angle rotates the gradient.</p>
+          <label class="theme-edit-slider">
+            <span>Mix <output id="themeEditGradientValue">50%</output></span>
+            <input id="themeEditGradient" type="range" min="0" max="100" step="1" value="50" />
+          </label>
+          <label class="theme-edit-slider">
+            <span>Fade <output id="themeEditFadeValue">80%</output></span>
+            <input id="themeEditFade" type="range" min="0" max="100" step="1" value="80" />
+          </label>
+          <label class="theme-edit-slider">
+            <span>Angle <output id="themeEditAngleValue">135°</output></span>
+            <input id="themeEditAngle" type="range" min="0" max="360" step="1" value="135" />
+          </label>
+          <div class="theme-edit-grad-preview" id="themeEditGradPreview"></div>
+        </div>
+        <div class="theme-edit-anim" id="themeEditAnimRow" hidden>
+          <p class="eyebrow">MOTION</p>
+          <div class="segmented" id="themeEditAnimMode">
+            <button type="button" data-anim-mode="rgb" class="active">RGB cycle</button>
+            <button type="button" data-anim-mode="fade">Fade</button>
+          </div>
+          <p class="log-set-hint">RGB cycle walks the hues between the two colors, then back. Fade pulses one color, then the other.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="bgFxEditor" class="confirm-overlay log-set-overlay" hidden>
+      <div class="confirm-card log-set-card theme-edit-card" role="dialog" aria-modal="true" aria-labelledby="bgFxEditTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">BACKGROUND</p>
+            <h3 id="bgFxEditTitle">Edit background</h3>
+          </div>
+          <button type="button" class="reset-btn log-set-close" id="bgFxEditorClose">Close</button>
+        </div>
+        <p class="log-set-hint" id="bgFxEditHint">Tune how this background moves and reacts to the cursor.</p>
+        <div class="bg-fx-edit-scroll">
+          <div id="bgFxEditFields"></div>
+        </div>
+        <div class="confirm-actions">
+          <button type="button" class="reset-btn" id="bgFxEditReset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="frostNavEditor" class="confirm-overlay log-set-overlay" hidden>
+      <div class="confirm-card log-set-card theme-edit-card frost-edit-card" role="dialog" aria-modal="true" aria-labelledby="frostEditTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5l-4.5-4.5L4 15.5V20Z" /><path d="M13.5 6 17 9.5" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">NAVIGATION</p>
+            <h3 id="frostEditTitle">Edit frost</h3>
+          </div>
+          <button type="button" class="reset-btn log-set-close" id="frostNavEditorClose">Close</button>
+        </div>
+        <p class="log-set-hint">How strongly frost blurs the page behind the menu.</p>
+        <label class="theme-edit-slider">
+          <span>Strength <output id="frostStrengthValue">8</output></span>
+          <input id="frostStrength" type="range" min="1" max="10" step="1" value="8" />
+        </label>
+        <div class="confirm-actions">
+          <button type="button" class="reset-btn" id="frostNavEditReset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="cmdPalette" class="palette-overlay" hidden>
+      <div class="palette-card" role="dialog" aria-modal="true" aria-label="Search settings">
+        <div class="palette-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+          <input id="paletteInput" type="text" placeholder="Search, or type a command (help)…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="paletteList" />
+          <kbd>Esc</kbd>
+        </div>
+        <div class="palette-list" id="paletteList" role="listbox"></div>
+        <div class="palette-foot">
+          <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+          <span><kbd>Enter</kbd> run</span>
+          <span><kbd>Tab</kbd> complete</span>
+          <span><kbd>Ctrl S</kbd> save config</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-tip" id="navTip" hidden></div>
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+    <div id="boneStudio" class="guide-overlay script-editor" hidden>
+      <div class="guide-panel" role="dialog" aria-modal="true" aria-labelledby="boneStudioTitle">
+        <header class="guide-bar">
+          <button type="button" class="guide-back" id="boneStudioBack">
+            <svg viewBox="0 0 24 24"><path d="M15 6 9 12l6 6"/></svg>
+            Back
+          </button>
+          <h2 id="boneStudioTitle">Bones</h2>
+          <span class="guide-x-spacer" aria-hidden="true"></span>
+        </header>
+        <div class="guide-body" id="boneStudioBody"></div>
+      </div>
+    </div>
+
+
+    <div id="csiSetup" class="confirm-overlay csi-overlay" hidden>
+      <div class="confirm-card csi-setup-card" role="dialog" aria-modal="true" aria-labelledby="csiSetupTitle">
+        <ol class="csi-steps" id="csiSteps" aria-hidden="true">
+          <li data-step="steam"><i></i><span>Steam</span></li>
+          <li data-step="pricing"><i></i><span>Prices</span></li>
+          <li data-step="key"><i></i><span>Key</span></li>
+          <li data-step="leetify"><i></i><span>Leetify</span></li>
+        </ol>
+        <div class="csi-setup-stage" id="csiSetupStage">
+          <section class="csi-setup-pane" data-pane="steam">
+            <span class="csi-setup-icon csi-steam-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2" /><circle cx="15.6" cy="9.2" r="2.6" /><circle cx="9" cy="15.4" r="1.9" /><path d="m10.6 14.3 3-3.2M3.6 13.6l3.8 1.6" /></svg>
+            </span>
+            <h3 id="csiSetupTitle">Sign in to Steam</h3>
+            <p>Argus reads your CS2 inventory straight from Steam, the same way the Steam website does. A Steam window will open for you to sign in. The sign-in is saved on this PC, so you only do this once.</p>
+            <p class="csi-setup-wait" id="csiSteamWait" hidden><i class="csi-spin" aria-hidden="true"></i>Waiting for you to sign in in the Steam window&hellip;</p>
+            <div class="confirm-actions">
+              <button type="button" class="reset-btn" data-setup="cancel">Cancel</button>
+              <button type="button" class="settings-save" data-setup="steam">Sign in with Steam</button>
+            </div>
+          </section>
+          <section class="csi-setup-pane" data-pane="pricing">
+            <span class="csi-setup-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 2.6 4.5 3 4.5 1.4 4.5 3.2-2 3.3-4.5 3.3-4.5-1.4-4.5-3.1" /></svg>
+            </span>
+            <h3>Show prices?</h3>
+            <p>Argus can estimate what each item and your whole inventory are worth, using the lowest CSFloat buy-now listing for that item and wear. This needs a free CSFloat API key.</p>
+            <p class="csi-setup-who" id="csiSetupWho"></p>
+            <div class="confirm-actions">
+              <button type="button" class="reset-btn" data-setup="no-pricing">No thanks</button>
+              <button type="button" class="settings-save" data-setup="yes-pricing">Yes, show prices</button>
+            </div>
+          </section>
+          <section class="csi-setup-pane" data-pane="leetify">
+            <span class="csi-setup-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3" /></svg>
+            </span>
+            <h3>Leetify API key <small class="csi-optional">Optional</small></h3>
+            <p>CS2 stats come from Leetify. They work without a key, but Leetify applies stricter rate limits. You can create a free key on the Leetify developer page and add it now or later in Settings.</p>
+            <div class="csi-key-input">
+              <input id="csiLeetifyKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Leetify key" />
+              <button type="button" class="csi-eye" data-eye="csiLeetifyKey" aria-label="Show key">
+                <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+              </button>
+            </div>
+            <p class="csi-setup-error" id="csiLeetifyError" hidden></p>
+            <button type="button" class="text-btn csi-get-key" data-link="https://leetify.com/app/developer">Open Leetify developer page &rarr;</button>
+            <div class="confirm-actions">
+              <button type="button" class="reset-btn" data-setup="skip-leetify">Skip</button>
+              <button type="button" class="settings-save" data-setup="save-leetify">Save key</button>
+            </div>
+          </section>
+          <section class="csi-setup-pane" data-pane="key">
+            <span class="csi-setup-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4" /><path d="m10.8 12.2 8.7-8.7M16.5 6.5l2.5 2.5M14 9l2 2" /></svg>
+            </span>
+            <h3>CSFloat API key</h3>
+            <p>Open your CSFloat profile, go to the <b>Developer</b> tab, create a key, and paste it here. It is encrypted with your Windows account.</p>
+            <div class="csi-key-input">
+              <input id="csiSetupKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your CSFloat key" />
+              <button type="button" class="csi-eye" data-eye="csiSetupKey" aria-label="Show key">
+                <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+              </button>
+            </div>
+            <p class="csi-setup-error" id="csiSetupError" hidden></p>
+            <button type="button" class="text-btn csi-get-key" data-link="https://csfloat.com/profile">Open CSFloat profile &rarr;</button>
+            <div class="confirm-actions">
+              <button type="button" class="reset-btn" data-setup="skip-key">Skip</button>
+              <button type="button" class="settings-save" data-setup="save-key">Save key</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="csiItem" class="confirm-overlay csi-overlay" hidden>
+      <div class="confirm-card csi-item-card" role="dialog" aria-modal="true" aria-labelledby="csiItemTitle">
+        <button type="button" class="csi-close" id="csiItemClose" aria-label="Close">
+          <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" /></svg>
+        </button>
+        <div class="csi-item-body" id="csiItemBody"></div>
+      </div>
+    </div>
+
+    <div id="cstMatch" class="confirm-overlay csi-overlay" hidden>
+      <div class="confirm-card cst-match-card" role="dialog" aria-modal="true" aria-labelledby="cstMatchTitle">
+        <button type="button" class="csi-close" id="cstMatchClose" aria-label="Close">
+          <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" /></svg>
+        </button>
+        <div class="cst-match-body" id="cstMatchBody"></div>
+      </div>
+    </div>
+
+    <div id="csiKeys" class="confirm-overlay csi-overlay" hidden>
+      <div class="confirm-card csi-keys-card" role="dialog" aria-modal="true" aria-labelledby="csiKeysTitle">
+        <div class="confirm-head">
+          <span class="confirm-icon log-set-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4" /><path d="m10.8 12.2 8.7-8.7M16.5 6.5l2.5 2.5M14 9l2 2" /></svg>
+          </span>
+          <div>
+            <p class="eyebrow">SETTINGS</p>
+            <h3 id="csiKeysTitle">API keys</h3>
+          </div>
+          <button type="button" class="csi-close" id="csiKeysClose" aria-label="Close">
+            <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" /></svg>
+          </button>
+        </div>
+        <div class="csi-key-list" id="csiKeyList"></div>
+        <p class="csi-keys-foot">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" /></svg>
+          Keys are encrypted with Windows DPAPI and can only be read by your Windows account on this PC.
+        </p>
+      </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="app.js"></script>
+    <script src="modules.js"></script>
+    <script src="commands.js"></script>
+    <script src="inventory.js"></script>
+    <script src="stats.js"></script>
+    <script src="humanizer.js"></script>
+  </body>
+</html>
