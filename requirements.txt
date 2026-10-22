@@ -1,0 +1,7 @@
+dxcam>=0.0.5
+numpy>=1.24
+opencv-python>=4.8
+pycuda>=2024.1
+pywebview>=5.0
+# tensorrt: install separately from NVIDIA's pip index matching your CUDA version, e.g.:
+#   pip install tensorrt --extra-index-url https://pypi.nvidia.com

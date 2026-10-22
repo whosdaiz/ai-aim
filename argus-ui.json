@@ -1,0 +1,84 @@
+{
+  "frostNav": true,
+  "altNav": false,
+  "customAnim": {
+    "name": "Custom",
+    "accent": "#e879f9",
+    "accent2": "#22d3ee",
+    "blue": "#67e8f9",
+    "orange": "#facc15",
+    "red": "#fb7185",
+    "animMode": "rgb"
+  },
+  "staticGradients": true,
+  "bgFxOpts": {
+    "particles": {
+      "count": 6,
+      "speed": 5,
+      "attract": 5,
+      "size": 5,
+      "links": 3,
+      "click": 1,
+      "clickAmt": 5
+    },
+    "neural": {
+      "count": 6,
+      "speed": 3,
+      "link": 7,
+      "mouse": 7,
+      "glow": 6,
+      "click": 1,
+      "clickAmt": 5
+    },
+    "mesh": {
+      "density": 5,
+      "pull": 6,
+      "radius": 6,
+      "click": 1,
+      "clickAmt": 10,
+      "clickScale": 2
+    },
+    "hive": {
+      "density": 8,
+      "radius": 1,
+      "glow": 10,
+      "click": 1,
+      "clickAmt": 1
+    },
+    "stars": {
+      "density": 1,
+      "size": 5,
+      "sizeJitter": 6,
+      "twinkle": 4,
+      "twinkleSpeed": 5,
+      "parallax": 0,
+      "showers": 1,
+      "showerJitter": 7,
+      "meteorSize": 6,
+      "meteorJitter": 8,
+      "meteorSpeed": 2,
+      "meteorSpeedScale": 2,
+      "burnout": 2,
+      "burnoutJitter": 9
+    }
+  },
+  "compactNav": false,
+  "themeSpeed": 5,
+  "customStatic": {
+    "name": "Custom",
+    "accent": "#5eead4",
+    "accent2": "#14b8a6",
+    "blue": "#69a7ff",
+    "orange": "#ff9d66",
+    "red": "#ff6b78",
+    "gradientPct": 50,
+    "gradientFade": 80,
+    "gradientAngle": 135
+  },
+  "theme": "aurora",
+  "frostStrength": 4,
+  "autoHideNav": false,
+  "bgFx": "stars",
+  "reduceMotion": false,
+  "frostScale": 2
+}
